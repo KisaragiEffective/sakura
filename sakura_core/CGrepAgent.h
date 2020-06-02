@@ -84,8 +84,6 @@ public:
 		const CNativeW*			pcmGrepReplace,
 		const CNativeW*			pcmGrepFile,
 		const CNativeW*			pcmGrepFolder,
-		const CNativeW*			pcmExcludeFile,
-		const CNativeW*			pcmExcludeFolder,
 		bool					bGrepCurFolder,
 		BOOL					bGrepSubFolder,
 		bool					bGrepStdout,
@@ -194,5 +192,3 @@ public: //$$ 仮
 	bool	m_bGrepMode;		//!< Grepモードか
 	bool	m_bGrepRunning;		//!< Grep処理中
 };
-
-/*[EOF]*/

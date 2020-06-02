@@ -89,7 +89,7 @@ public:
 	virtual BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam);
 	virtual void SetDialogPosSize();
 	virtual BOOL OnDestroy( void );
-	virtual BOOL OnNotify( WPARAM wParam, LPARAM lParam ){return FALSE;}
+	virtual BOOL OnNotify(NMHDR* pNMHDR){return FALSE;}
 	BOOL OnSize();
 	virtual BOOL OnSize( WPARAM wParam, LPARAM lParam );
 	virtual BOOL OnMove( WPARAM wParam, LPARAM lParam );
@@ -102,6 +102,7 @@ public:
 	virtual BOOL OnBnClicked(int wID);
 	virtual BOOL OnStnClicked( int ){return FALSE;}
 	virtual BOOL OnEnChange( HWND hwndCtl, int wID ){return FALSE;}
+	virtual BOOL OnEnSetFocus( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnEnKillFocus( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnLbnSelChange( HWND hwndCtl, int wID ){return FALSE;}
 	virtual BOOL OnLbnDblclk( int wID ){return FALSE;}
@@ -161,5 +162,3 @@ protected:
 	// コントロールに画面のフォントを設定	2012/11/27 Uchi
 	HFONT SetMainFont( HWND hTarget );
 };
-
-///////////////////////////////////////////////////////////////////////

@@ -261,22 +261,9 @@ BOOL CDlgCtrlCode::OnBnClicked( int wID )
 	return CDialog::OnBnClicked( wID );
 }
 
-#ifdef __MINGW32__
-#ifndef BUILD_OPT_NEW_HEADERS
-typedef struct tagNMKEY {
-  NMHDR hdr;
-  UINT  nVKey;
-  UINT  uFlags;
-} NMKEY, *LPNMKEY;
-#endif
-#endif
-
-BOOL CDlgCtrlCode::OnNotify( WPARAM wParam, LPARAM lParam )
+BOOL CDlgCtrlCode::OnNotify( NMHDR* pNMHDR )
 {
-	NMHDR*	pNMHDR;
 	HWND	hwndList;
-
-	pNMHDR = (NMHDR*)lParam;
 
 	hwndList = GetItemHwnd( IDC_LIST_CTRLCODE );
 
@@ -291,7 +278,7 @@ BOOL CDlgCtrlCode::OnNotify( WPARAM wParam, LPARAM lParam )
 		case LVN_KEYDOWN:
 			{
 				HWND	hwndList;
-				NMKEY	*p = (NMKEY*)lParam;
+				NMKEY	*p = (NMKEY*)pNMHDR;
 				int		i, j;
 				unsigned int	c;
 				for( i = 0; i < _countof(p_ctrl_list); i++ )
@@ -321,11 +308,10 @@ BOOL CDlgCtrlCode::OnNotify( WPARAM wParam, LPARAM lParam )
 	}
 
 	/* 基底クラスメンバ */
-	return CDialog::OnNotify( wParam, lParam );
+	return CDialog::OnNotify(pNMHDR);
 }
 
 LPVOID CDlgCtrlCode::GetHelpIdTable( void )
 {
 	return (LPVOID)p_helpids;
 }
-

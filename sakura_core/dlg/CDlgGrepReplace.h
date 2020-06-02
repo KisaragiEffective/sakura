@@ -39,6 +39,8 @@ public:
 	int				m_nReplaceKeySequence;	//!< 置換後シーケンス
 
 protected:
+	CRecentReplace			m_cRecentReplace;
+	SComboBoxItemDeleter	m_comboDelText2;
 	CFontAutoDeleter		m_cFontText2;
 
 	/*
@@ -52,5 +54,3 @@ protected:
 	void SetData( void ) override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;	/* ダイアログデータの取得 */
 };
-
-///////////////////////////////////////////////////////////////////////

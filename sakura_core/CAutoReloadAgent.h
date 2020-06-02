@@ -43,7 +43,11 @@ public:
 
 	//監視の一時停止
 	void PauseWatching(){ m_nPauseCount++; }
-	void ResumeWatching(){ m_nPauseCount--; assert(m_nPauseCount>=0); }
+	void ResumeWatching()
+	{
+		m_nPauseCount--;
+		assert(m_nPauseCount>=0);
+	}
 	bool IsPausing() const{ return m_nPauseCount>=1; }
 
 public://#####仮
@@ -58,5 +62,3 @@ private:
 	int m_nPauseCount;	//これが1以上の場合は監視をしない
 	int m_nDelayCount;	//未編集で再ロード時の遅延カウンタ
 };
-
-/*[EOF]*/

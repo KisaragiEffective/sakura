@@ -71,7 +71,7 @@ protected:
 	*/
 	BOOL	OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam ) override;
 	BOOL	OnBnClicked(int wID) override;
-	BOOL	OnNotify( WPARAM wParam, LPARAM lParam ) override;
+	BOOL	OnNotify(NMHDR* pNMHDR) override;
 	BOOL	OnCbnSelChange( HWND hwndCtl, int wID ) override;
 	BOOL	OnEnChange( HWND hwndCtl, int wID ) override;
 	BOOL	OnActivate( WPARAM wParam, LPARAM lParam ) override;
@@ -95,4 +95,3 @@ private:
 	int				m_Line;			// 現在編集中のオプション行番号
 	std::wstring	m_sReadMeName;	// ReadMe ファイル名
 };
-

@@ -26,6 +26,10 @@ jobs:
         BuildPlatform: 'x64'
         Configuration: 'Release'
 
+  # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/variables?view=azure-devops&tabs=yaml%2Cbatch
+  variables:
+    ARG_VSVERSION: ${{ parameters.ARG_VSVERSION }}
+
   steps:
   # show environmental variables for debug.
   - script: set
@@ -37,13 +41,21 @@ jobs:
   - script: build-sln.bat       $(BuildPlatform) $(Configuration)
     displayName: Build solution
 
-#  # Build HTML Help
-#  - script: build-chm.bat
-#    displayName: Build HTML Help
-#
-#  # Build instaler with Inno Setup
-#  - script: build-installer.bat $(BuildPlatform) $(Configuration)
-#    displayName: Build instaler with Inno Setup
+  # Toolbar Bitmap Split/Mux
+  - script: build-bmp-tools.bat $(Configuration)
+    displayName: Bitmap Split/Mux
+
+  # Install Locale Emulator
+  - script: choco install locale-emulator -y
+    displayName: Install Locale Emulator
+
+  # Build HTML Help
+  - script: build-chm.bat
+    displayName: Build HTML Help
+
+  # Build installer with Inno Setup
+  - script: build-installer.bat $(BuildPlatform) $(Configuration)
+    displayName: Build installer with Inno Setup
 
   # zip files for artifacts
   - script: zipArtifacts.bat    $(BuildPlatform) $(Configuration)

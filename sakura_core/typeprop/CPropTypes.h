@@ -46,7 +46,7 @@ template <class TYPE>
 struct TYPE_NAME_ID2 {
 	TYPE			nMethod;
 	int				nNameId;
-	const WCHAR*	pszName;
+	WCHAR*			pszName;
 };
 
 //!< プロパティシート番号
@@ -251,5 +251,3 @@ void InitTypeNameId2( std::vector<TYPE_NAME_ID2<T> >& vec, TYPE_NAME_ID<T>* arr,
 		vec.push_back( item );
 	}
 }
-
-///////////////////////////////////////////////////////////////////////

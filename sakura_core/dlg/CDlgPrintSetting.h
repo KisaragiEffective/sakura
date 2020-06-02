@@ -66,11 +66,12 @@ protected:
 	int GetData( void ) override;	/* ダイアログデータの取得 */
 	BOOL OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam) override;
 	BOOL OnDestroy( void ) override;
-	BOOL OnNotify(WPARAM wParam, LPARAM lParam) override;
+	BOOL OnNotify(NMHDR* pNMHDR) override;
 	BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnStnClicked(int wID) override;
 	BOOL OnEnChange( HWND hwndCtl, int wID ) override;
+	BOOL OnEnSetFocus(HWND hwndCtl, int wID) override;
 	BOOL OnEnKillFocus( HWND hwndCtl, int wID ) override;
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 
@@ -81,5 +82,3 @@ protected:
 	void UpdatePrintableLineAndColumn();	/* 行数と桁数の計算要求 */
 	void SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize );	// フォント名/使用ボタンの設定
 };
-
-///////////////////////////////////////////////////////////////////////

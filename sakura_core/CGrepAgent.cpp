@@ -28,6 +28,55 @@
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
 #define UIFILENAME_INTERVAL_MILLISEC 15	// Cancelダイアログのファイル名表示更新間隔
 
+/*!
+ * 指定された文字列をタイプ別設定に従ってエスケープする
+ */
+inline CNativeW EscapeStringLiteral( const STypeConfig& type, const CNativeW& cmemString )
+{
+	CNativeW cmemWork2( cmemString );
+	if( FALSE == type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp ){
+		// 2011.11.28 色指定が無効ならエスケープしない
+	}else
+	if( type.m_nStringType == STRING_LITERAL_CPP || type.m_nStringType == STRING_LITERAL_CSHARP
+		|| type.m_nStringType == STRING_LITERAL_PYTHON ){	/* 文字列区切り記号エスケープ方法 */
+		cmemWork2.Replace( L"\\", L"\\\\" );
+		cmemWork2.Replace( L"\'", L"\\\'" );
+		cmemWork2.Replace( L"\"", L"\\\"" );
+	}else if( type.m_nStringType == STRING_LITERAL_PLSQL ){
+		cmemWork2.Replace( L"\'", L"\'\'" );
+		cmemWork2.Replace( L"\"", L"\"\"" );
+	}
+	return cmemWork2;
+}
+
+/*!
+ * パスリストを文字列化する
+ */
+template<class ContainerType>
+std::wstring FormatPathList( const ContainerType& containter )
+{
+	std::wstring strPatterns;
+	bool firstItem = true;
+	for( const auto& pattern : containter ){
+		// パスリストは ':' で区切る(2つ目以降の前に付加する)
+		if( firstItem ){
+			firstItem = false;
+		}else {
+			strPatterns += L';';
+		}
+
+		// ';' を含むパス名は引用符で囲む
+		if( std::wstring::npos != std::wstring_view( pattern ).find( L';' ) ){
+			strPatterns += L'"';
+			strPatterns += pattern;
+			strPatterns += L'"';
+		}else{
+			strPatterns += pattern;
+		}
+	}
+	return strPatterns;
+}
+
 CGrepAgent::CGrepAgent()
 : m_bGrepMode( false )			/* Grepモードか */
 , m_bGrepRunning( false )		/* Grep処理中 */
@@ -169,8 +218,6 @@ DWORD CGrepAgent::DoGrep(
 	const CNativeW*			pcmGrepReplace,
 	const CNativeW*			pcmGrepFile,
 	const CNativeW*			pcmGrepFolder,
-	const CNativeW*			pcmExcludeFile,
-	const CNativeW*			pcmExcludeFolder,
 	bool					bGrepCurFolder,
 	BOOL					bGrepSubFolder,
 	bool					bGrepStdout,
@@ -358,9 +405,7 @@ DWORD CGrepAgent::DoGrep(
 	CGrepEnumKeys cGrepEnumKeys;
 	{
 		int nErrorNo = cGrepEnumKeys.SetFileKeys( pcmGrepFile->GetStringPtr() );
-		int nErrorNo_ExcludeFile   = cGrepEnumKeys.AddExceptFile(pcmExcludeFile->GetStringPtr());
-		int nErrorNo_ExcludeFolder = cGrepEnumKeys.AddExceptFolder(pcmExcludeFolder->GetStringPtr());
-		if( nErrorNo != 0 || nErrorNo_ExcludeFile != 0 || nErrorNo_ExcludeFolder != 0){
+		if( nErrorNo != 0 ){
 			this->m_bGrepRunning = false;
 			pcViewDst->m_bDoing_UndoRedo = false;
 			pcViewDst->SetUndoBuffer();
@@ -372,22 +417,13 @@ DWORD CGrepAgent::DoGrep(
 			else if( nErrorNo == 2 ){
 				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
 			}
-			else if (nErrorNo_ExcludeFile == 1) {
-				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS1);
-			}
-			else if (nErrorNo_ExcludeFile == 2) {
-				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
-			}
-			else if (nErrorNo_ExcludeFolder == 1) {
-				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS1);
-			}
-			else if (nErrorNo_ExcludeFolder == 2) {
-				pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS2);
-			}
 			ErrorMessage( pcViewDst->m_hwndParent, L"%s", pszErrorMessage );
 			return 0;
 		}
 	}
+
+	// 出力対象ビューのタイプ別設定(grepout固定)
+	const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	std::vector<std::wstring> vPaths;
 	CreateFolders( pcmGrepFolder->GetStringPtr(), vPaths );
@@ -398,103 +434,59 @@ DWORD CGrepAgent::DoGrep(
 	CNativeW	cmemWork;
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_CONDITION ) );	//L"\r\n□検索条件  "
 	if( 0 < nWork ){
-		CNativeW cmemWork2;
-		cmemWork2.SetNativeData( *pcmGrepKey );
-		const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
-		if( FALSE == type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp ){
-			// 2011.11.28 色指定が無効ならエスケープしない
-		}else
-		if( type.m_nStringType == STRING_LITERAL_CPP || type.m_nStringType == STRING_LITERAL_CSHARP
-			|| type.m_nStringType == STRING_LITERAL_PYTHON ){	/* 文字列区切り記号エスケープ方法 */
-			cmemWork2.Replace( L"\\", L"\\\\" );
-			cmemWork2.Replace( L"\'", L"\\\'" );
-			cmemWork2.Replace( L"\"", L"\\\"" );
-		}else if( type.m_nStringType == STRING_LITERAL_PLSQL ){
-			cmemWork2.Replace( L"\'", L"\'\'" );
-			cmemWork2.Replace( L"\"", L"\"\"" );
-		}
-		cmemWork.AppendString( L"\"" );
-		cmemWork.AppendNativeData( cmemWork2 );
-		cmemWork.AppendString( L"\"\r\n" );
+		cmemMessage.AppendString( L"\"" );
+		cmemMessage += EscapeStringLiteral(type, *pcmGrepKey);
+		cmemMessage.AppendString( L"\"\r\n" );
 	}else{
-		cmemWork.AppendString( LS( STR_GREP_SEARCH_FILE ) );	//L"「ファイル検索」\r\n"
+		cmemMessage.AppendString( LS( STR_GREP_SEARCH_FILE ) );	//L"「ファイル検索」\r\n"
 	}
-	cmemMessage += cmemWork;
 
 	if( bGrepReplace ){
 		cmemMessage.AppendString( LS(STR_GREP_REPLACE_TO) );
 		if( bGrepPaste ){
 			cmemMessage.AppendString( LS(STR_GREP_PASTE_CLIPBOAD) );
 		}else{
-			CNativeW cmemWork2;
-			cmemWork2.SetNativeData( cmemReplace );
-			const STypeConfig& type = pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
-			if( FALSE == type.m_ColorInfoArr[COLORIDX_WSTRING].m_bDisp ){
-				// 2011.11.28 色指定が無効ならエスケープしない
-			}else
-			if( type.m_nStringType == STRING_LITERAL_CPP || type.m_nStringType == STRING_LITERAL_CSHARP
-				|| type.m_nStringType == STRING_LITERAL_PYTHON ){	/* 文字列区切り記号エスケープ方法 */
-				cmemWork2.Replace( L"\\", L"\\\\" );
-				cmemWork2.Replace( L"\'", L"\\\'" );
-				cmemWork2.Replace( L"\"", L"\\\"" );
-			}else if( type.m_nStringType == STRING_LITERAL_PLSQL ){
-				cmemWork2.Replace( L"\'", L"\'\'" );
-				cmemWork2.Replace( L"\"", L"\"\"" );
-			}
 			cmemMessage.AppendString( L"\"" );
-			cmemMessage.AppendNativeData( cmemWork2 );
+			cmemMessage += EscapeStringLiteral(type, cmemReplace);
 			cmemMessage.AppendString( L"\"\r\n" );
 		}
 	}
 
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_TARGET ) );	//L"検索対象   "
-	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}else{
+	{
+		// 解析済みのファイルパターン配列を取得する
+		const auto& vecSearchFileKeys = cGrepEnumKeys.m_vecSearchFileKeys;
+		std::wstring strPatterns = FormatPathList( vecSearchFileKeys );
+		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
 	}
-	cmemWork.SetString( pcmGrepFile->GetStringPtr() );
-	cmemMessage += cmemWork;
-
 	cmemMessage.AppendString( L"\r\n" );
+
 	cmemMessage.AppendString( LS( STR_GREP_SEARCH_FOLDER ) );	//L"フォルダ   "
 	{
-		std::wstring grepFolder;
-		for( int i = 0; i < (int)vPaths.size(); i++ ){
-			if( i ){
-				grepFolder += L';';
-			}
-			std::wstring sPath = ChopYen( vPaths[i] );
-			if( auto_strchr( sPath.c_str(), L';' ) ){
-				grepFolder += L'"';
-				grepFolder += sPath;
-				grepFolder += L'"';
-			}else{
-				grepFolder += sPath;
-			}
-		}
-		cmemWork.SetString( grepFolder.c_str() );
+		// フォルダリストから末尾のバックスラッシュを削ったパスリストを作る
+		std::list<std::wstring> folders;
+		std::transform( vPaths.cbegin(), vPaths.cend(), std::back_inserter( folders ), []( const auto& path ) { return ChopYen( path ); } );
+		std::wstring strPatterns = FormatPathList( folders );
+		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
 	}
-	if( pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0 ){	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	}else{
-	}
-	cmemMessage += cmemWork;
 	cmemMessage.AppendString( L"\r\n" );
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FILE));	//L"除外ファイル   "
-	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+	{
+		// 除外ファイルの解析済みリストを取得る
+		auto excludeFiles = cGrepEnumKeys.GetExcludeFiles();
+		std::wstring strPatterns = FormatPathList( excludeFiles );
+		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
 	}
-	else {
-	}
-	cmemWork.SetString(pcmExcludeFile->GetStringPtr());
-	cmemMessage += cmemWork;
 	cmemMessage.AppendString(L"\r\n");
 
 	cmemMessage.AppendString(LS(STR_GREP_EXCLUDE_FOLDER));	//L"除外フォルダ   "
-	if (pcViewDst->m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_nStringType == 0) {	/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
+	{
+		// 除外フォルダの解析済みリストを取得する
+		auto excludeFolders = cGrepEnumKeys.GetExcludeFolders();
+		std::wstring strPatterns = FormatPathList( excludeFolders );
+		cmemMessage.AppendString( strPatterns.c_str(), strPatterns.length() );
 	}
-	else {
-	}
-	cmemWork.SetString(pcmExcludeFolder->GetStringPtr());
-	cmemMessage += cmemWork;
 	cmemMessage.AppendString(L"\r\n");
 
 	const wchar_t*	pszWork;
@@ -1130,8 +1122,10 @@ int CGrepAgent::DoGrepFile(
 	bOutFileName = FALSE;
 	CEol	cEol;
 	int		nEolCodeLen;
-	const STypeConfigMini* type;
-	CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type );
+	const STypeConfigMini* type = NULL;
+	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type ) ){
+		return -1;
+	}
 	CFileLoad	cfl( type->m_encoding );	// 2012/12/18 Uchi 検査するファイルのデフォルトの文字コードを取得する様に
 	int		nOldPercent = 0;
 
@@ -1678,8 +1672,10 @@ int CGrepAgent::DoGrepReplaceFile(
 	int	nKeyLen = wcslen( pszKey );
 	const WCHAR*	pszCodeName = L"";
 
-	const STypeConfigMini* type;
-	CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type );
+	const STypeConfigMini* type = NULL;
+	if( !CDocTypeManager().GetTypeConfigMini( CDocTypeManager().GetDocumentTypeOfPath( pszFile ), &type ) ){
+		return -1;
+	}
 	CFileLoad	cfl( type->m_encoding );	// 2012/12/18 Uchi 検査するファイルのデフォルトの文字コードを取得する様に
 	bool bBom;
 	// ファイル名表示
@@ -1963,4 +1959,3 @@ int CGrepAgent::DoGrepReplaceFile(
 
 	return nHitCount;
 }
-

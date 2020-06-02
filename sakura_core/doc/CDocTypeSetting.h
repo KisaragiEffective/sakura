@@ -24,6 +24,8 @@
 */
 #pragma once
 
+#include "basis/CMyString.h"	//SFilePath
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                          色設定                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -69,5 +71,3 @@ struct KeyHelpInfo {
 	SFilePath	m_szPath;					//!< ファイルパス
 };
 //@@@ 2006.04.10 fon ADD-end
-
-/*[EOF]*/
