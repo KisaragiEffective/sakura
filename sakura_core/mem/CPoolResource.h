@@ -1,5 +1,5 @@
 ﻿/*
-	Copyright (C) 2018-2020 Sakura Editor Organization
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +22,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CPOOLRESOURCE_4DEA6BEC_4D80_408F_9AEE_67AAF95BFE90_H_
+#define SAKURA_CPOOLRESOURCE_4DEA6BEC_4D80_408F_9AEE_67AAF95BFE90_H_
 #pragma once
 
 #include <memory_resource>
@@ -132,3 +134,4 @@ private:
 	Node* m_currentBlock = nullptr; // 現在のブロック
 	Node* m_currentNode = nullptr; // 要素確保処理時に現在のブロックの中から切り出すNodeを指すポインタ、メモリ確保時に未割当領域が無い場合はここを使う
 };
+#endif /* SAKURA_CPOOLRESOURCE_4DEA6BEC_4D80_408F_9AEE_67AAF95BFE90_H_ */

@@ -18,6 +18,7 @@
 	Copyright (C) 2009, nasukoji
 	Copyright (C) 2011, ryoji
 	Copyright (C) 2013, Uchi
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -79,6 +80,8 @@
 #include "util/string_ex2.h"
 #include "util/window.h"
 #include "sakura_rc.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 #define IDT_ROLLMOUSE	1
 

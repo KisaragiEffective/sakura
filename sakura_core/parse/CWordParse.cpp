@@ -1,7 +1,32 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2021, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "CWordParse.h"
 #include "charset/charcode.h"
+#include "charset/codechecker.h"
+#include "mem/CNativeW.h"
 
 //@@@ 2001.06.23 N.Nakatani
 /*!
@@ -14,6 +39,7 @@ bool CWordParse::WhereCurrentWord_2(
 	const wchar_t*	pLine,			//!< [in]  調べるメモリ全体の先頭アドレス
 	CLogicInt		nLineLen,		//!< [in]  調べるメモリ全体の有効長
 	CLogicInt		nIdx,			//!< [in]  調査開始地点:pLineからの相対的な位置
+	bool			bEnableExtEol,	//!< [in]  Unicode改行文字を改行とみなすかどうか
 	CLogicInt*		pnIdxFrom,		//!< [out] 単語が見つかった場合は、単語の先頭インデックスを返す。
 	CLogicInt*		pnIdxTo,		//!< [out] 単語が見つかった場合は、単語の終端の次のバイトの先頭インデックスを返す。
 	CNativeW*		pcmcmWord,		//!< [out] 単語が見つかった場合は、現在単語を切り出して指定されたCMemoryオブジェクトに格納する。情報が不要な場合はNULLを指定する。
@@ -33,7 +59,7 @@ bool CWordParse::WhereCurrentWord_2(
 	}
 
 	// 現在位置の文字の種類によっては選択不可
-	if( WCODE::IsLineDelimiter(pLine[nIdx], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+	if( WCODE::IsLineDelimiter(pLine[nIdx], bEnableExtEol) ){
 		return false;
 	}
 
@@ -92,7 +118,7 @@ inline bool isCSymbol(wchar_t c)
 	//	(c>=L'0' && c<=L'9') ||
 	//	(c>=L'A' && c<=L'Z') ||
 	//	(c>=L'a' && c<=L'z');
-	return (c<_countof(gm_keyword_char) && gm_keyword_char[c]==CK_CSYM);
+	return c < gm_keyword_char.size() && gm_keyword_char[c] == CK_CSYM;
 }
 
 //! 全角版、識別子に使用可能な文字かどうか
@@ -122,7 +148,7 @@ ECharKind CWordParse::WhatKindOfChar(
 		wchar_t c=pData[nIdx];
 
 		//今までの半角
-		if( c<_countof(gm_keyword_char) ) return (ECharKind)gm_keyword_char[c];
+		if( c<gm_keyword_char.size() ) return (ECharKind)gm_keyword_char[c];
 		//if( c == CR              )return CK_CR;
 		//if( c == LF              )return CK_LF;
 		//if( c == TAB             )return CK_TAB;	// タブ
@@ -307,6 +333,51 @@ bool CWordParse::SearchNextWordPosition4KW(
 		nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, nIdxNext );
 	}
 	return false;
+}
+
+bool CWordParse::SearchPrevWordPosition(const wchar_t* pLine,
+	CLogicInt nLineLen, CLogicInt nIdx, CLogicInt* pnColumnNew, BOOL bStopsBothEnds)
+{
+	/* 現在位置の文字の種類を調べる */
+	ECharKind	nCharKind = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdx );
+	if( nIdx == 0 ){
+		return false;
+	}
+
+	/* 文字種類が変わるまで前方へサーチ */
+	/* 空白とタブは無視する */
+	int		nCount = 0;
+	CLogicInt	nIdxNext = nIdx;
+	CLogicInt	nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
+	while( nCharChars > 0 ){
+		CLogicInt		nIdxNextPrev = nIdxNext;
+		nIdxNext -= nCharChars;
+		ECharKind nCharKindNext = CWordParse::WhatKindOfChar( pLine, nLineLen, nIdxNext );
+
+		ECharKind nCharKindMerge = CWordParse::WhatKindOfTwoChars( nCharKindNext, nCharKind );
+		if( nCharKindMerge == CK_NULL ){
+			/* サーチ開始位置の文字が空白またはタブの場合 */
+			if( nCharKind == CK_TAB	|| nCharKind == CK_SPACE ){
+				if ( bStopsBothEnds && nCount ){
+					nIdxNext = nIdxNextPrev;
+					break;
+				}
+				nCharKindMerge = nCharKindNext;
+			}else{
+				if( nCount == 0){
+					nCharKindMerge = nCharKindNext;
+				}else{
+					nIdxNext = nIdxNextPrev;
+					break;
+				}
+			}
+		}
+		nCharKind = nCharKindMerge;
+		nCharChars = CLogicInt(&pLine[nIdxNext] - CNativeW::GetCharPrev( pLine, nLineLen, &pLine[nIdxNext] ));
+		++nCount;
+	}
+	*pnColumnNew = nIdxNext;
+	return true;
 }
 
 //! wcがasciiなら0-127のまま返す。それ以外は0を返す。

@@ -8,6 +8,7 @@
 /*
 	Copyright (C) 2008, wakura
 	Copyright (C) 2011, Moca
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +30,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CGREPENUMKEYS_FCE5732F_FA0C_4CB2_90D9_D1D440841D5C_H_
+#define SAKURA_CGREPENUMKEYS_FCE5732F_FA0C_4CB2_90D9_D1D440841D5C_H_
 #pragma once
 
 #include <list>
@@ -42,6 +45,9 @@
 typedef std::vector< LPCWSTR > VGrepEnumKeys;
 
 class CGrepEnumKeys {
+
+	using Me = CGrepEnumKeys;
+
 public:
 	VGrepEnumKeys m_vecSearchFileKeys;
 	VGrepEnumKeys m_vecSearchFolderKeys;
@@ -53,9 +59,11 @@ public:
 	VGrepEnumKeys m_vecExceptAbsFolderKeys;
 
 public:
-	CGrepEnumKeys(){
-	}
-
+	CGrepEnumKeys() noexcept = default;
+	CGrepEnumKeys(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CGrepEnumKeys(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	~CGrepEnumKeys(){
 		ClearItems();
 	}
@@ -277,3 +285,4 @@ private:
 		return 0;
 	}
 };
+#endif /* SAKURA_CGREPENUMKEYS_FCE5732F_FA0C_4CB2_90D9_D1D440841D5C_H_ */

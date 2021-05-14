@@ -10,6 +10,7 @@
 	Copyright (C) 2004, isearch
 	Copyright (C) 2005, aroka
 	Copyright (C) 2009, miau
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -18,7 +19,11 @@
 Migemo はローマ字のまま日本語をインクリメンタル検索するためのツールです。
 */
 
+#ifndef SAKURA_CMIGEMO_BEF7C3E9_DC35_4C9D_BC69_8B7F9EBB4463_H_
+#define SAKURA_CMIGEMO_BEF7C3E9_DC35_4C9D_BC69_8B7F9EBB4463_H_
 #pragma once
+
+#include "basis/primitive.h"
 
 #define MIGEMO_VERSION "1.1"
 
@@ -134,3 +139,4 @@ public:
 	int migemo_is_enable();
 	int migemo_load_all();
 };
+#endif /* SAKURA_CMIGEMO_BEF7C3E9_DC35_4C9D_BC69_8B7F9EBB4463_H_ */

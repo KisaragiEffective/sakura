@@ -4,6 +4,7 @@
 // エディタ系ファイルからincludeするときは CRecent.h をinclude
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_
+#define SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_
 #pragma once
 
 #include "recent/CRecent.h"
@@ -129,3 +132,4 @@ protected:
 #include "CRecentCurDir.h"
 #include "CRecentEditNode.h"
 #include "CRecentTagjumpKeyword.h"
+#endif /* SAKURA_CRECENTIMP_B18E6196_5684_44E4_91E0_ADB1542BF7E1_H_ */

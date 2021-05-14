@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2002, 鬼, genta
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CIFOBJ_12FF5D67_757D_47E3_A7B3_E9896AAA6BB4_H_
+#define SAKURA_CIFOBJ_12FF5D67_757D_47E3_A7B3_E9896AAA6BB4_H_
 #pragma once
 
 #include <string>
@@ -137,3 +140,4 @@ private:
 	CMethodInfoList m_Methods;			//メソッド情報リスト
 	ITypeInfo* m_TypeInfo;
 };
+#endif /* SAKURA_CIFOBJ_12FF5D67_757D_47E3_A7B3_E9896AAA6BB4_H_ */

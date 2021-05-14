@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_
+#define SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_
 #pragma once
 
 /*!
@@ -189,3 +192,7 @@ private:
 	HFONT m_hFontOld;
 	HFONT m_hFont;
 };
+
+HFONT UpdateDialogFont( HWND hwnd, BOOL force = FALSE );
+
+#endif /* SAKURA_WINDOW_A0833476_5E32_46BE_87B6_ECD55F10D34A_H_ */

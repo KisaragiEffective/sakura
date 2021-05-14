@@ -17,6 +17,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, nasukoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -39,6 +40,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_
+#define SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_
 #pragma once
 
 #include <ShellAPI.h>// HDROP
@@ -335,6 +338,7 @@ public:
 	const LOGFONT&	GetLogfont(bool bTempSetting = true);
 	int			GetFontPointSize(bool bTempSetting = true);
 	ECharWidthCacheMode GetLogfontCacheMode();
+	double GetFontZoom();
 
 	void ClearViewCaretPosInfo();
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -418,3 +422,4 @@ private:
 public:
 	ESelectCountMode	m_nSelectCountMode; // 選択文字カウント方法
 };
+#endif /* SAKURA_CEDITWND_6C771A35_3CC8_4932_BF15_823C40487A9F_H_ */

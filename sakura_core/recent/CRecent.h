@@ -12,6 +12,7 @@
 /*
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, MIK
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -33,6 +34,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRECENT_F4D70310_9FAF_4F07_9431_2B011A47142D_H_
+#define SAKURA_CRECENT_F4D70310_9FAF_4F07_9431_2B011A47142D_H_
 #pragma once
 
 #include "_main/global.h"
@@ -81,3 +84,4 @@ public:
 };
 
 #include "CRecentImp.h"
+#endif /* SAKURA_CRECENT_F4D70310_9FAF_4F07_9431_2B011A47142D_H_ */

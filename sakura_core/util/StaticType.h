@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,9 +23,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_
+#define SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_
 #pragma once
 
 #include "util/string_ex.h"
+#include "debug/Debug2.h"
 
 //! ヒープを用いないvector
 //2007.09.23 kobake 作成。
@@ -117,10 +121,11 @@ public:
 	Me& operator = (const CHAR_TYPE* src){ Assign(src); return *this; }
 
 	//各種メソッド
-	int Length() const{ return auto_strlen(m_szData); }
+	int Length() const { return static_cast<int>(auto_strnlen(m_szData, BUFFER_COUNT)); }
 
 private:
 	CHAR_TYPE m_szData[N_BUFFER_COUNT];
 };
 
 #define _countof2(s) s.BUFFER_COUNT
+#endif /* SAKURA_STATICTYPE_54CC2BD5_4C7C_4584_B515_EF8C533B90EA_H_ */

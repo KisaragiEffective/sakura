@@ -5,6 +5,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,8 +35,11 @@
 #include "typeprop/CImpExpManager.h"
 #include "dlg/CDlgInput1.h"
 #include "util/shell.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 using std::wstring;
 
@@ -417,6 +421,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 			case CBN_SELCHANGE:
 				nIdxFIdx = Combo_GetCurSel( hwndComboFunkKind );
 
+				::SendMessage( hwndListFunk, WM_SETREDRAW, FALSE, 0 );
 				if (nIdxFIdx == nSpecialFuncsNum) {
 					// 機能一覧に特殊機能をセット
 					List_ResetContent( hwndListFunk );
@@ -428,6 +433,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					/* 機能一覧に文字列をセット（リストボックス）*/
 					m_cLookup.SetListItem( hwndListFunk, nIdxFIdx );
 				}
+				::SendMessage( hwndListFunk, WM_SETREDRAW, TRUE, 0 );
 
 				return TRUE;
 			}

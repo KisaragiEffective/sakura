@@ -7,17 +7,22 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CFUNCINFOARR_6E07CB18_7314_42F8_BA10_7C20E5ADCB76_H_
+#define SAKURA_CFUNCINFOARR_6E07CB18_7314_42F8_BA10_7C20E5ADCB76_H_
 #pragma once
 
 class CFuncInfo;
 #include <string>
 #include <map>
 #include "util/design_template.h"
+#include "basis/SakuraBasis.h"
+#include "basis/CMyString.h"
 
 // 標準的な付加情報定数
 #define FL_OBJ_DEFINITION	0	// 親クラスの定義位置
@@ -59,3 +64,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CFuncInfoArr);
 };
+#endif /* SAKURA_CFUNCINFOARR_6E07CB18_7314_42F8_BA10_7C20E5ADCB76_H_ */

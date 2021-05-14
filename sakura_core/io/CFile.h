@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CFILE_53DA3C63_95C0_49D0_9ED1_1C0131493912_H_
+#define SAKURA_CFILE_53DA3C63_95C0_49D0_9ED1_1C0131493912_H_
 #pragma once
 
 #include "basis/CMyString.h" //CFilePath
@@ -70,3 +73,4 @@ public:
 private:
 	FILE* m_fp;
 };
+#endif /* SAKURA_CFILE_53DA3C63_95C0_49D0_9ED1_1C0131493912_H_ */

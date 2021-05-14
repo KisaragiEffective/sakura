@@ -9,11 +9,14 @@
 	Copyright (C) 2002, aroka
 	Copyright (C) 2003, MIK
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CWND_86C8E4DA_7921_4D79_A481_E3AB0557D767_H_
+#define SAKURA_CWND_86C8E4DA_7921_4D79_A481_E3AB0557D767_H_
 #pragma once
 
 #include <Windows.h>
@@ -34,12 +37,20 @@
 */
 class CWnd
 {
+
+	using Me = CWnd;
+
 protected:
 	friend LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 public:
 	/* Constructors */
 	CWnd(const WCHAR* pszInheritanceAppend = L"");
+	CWnd(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+	CWnd(Me&&) noexcept = delete;
+	Me& operator = (Me&&) noexcept = delete;
 	virtual ~CWnd();
+
 	/*
 	||  Attributes & Operations
 	*/
@@ -129,3 +140,4 @@ private: // 2002/2/10 aroka アクセス権変更
 	WCHAR		m_szClassInheritances[1024];
 #endif
 };
+#endif /* SAKURA_CWND_86C8E4DA_7921_4D79_A481_E3AB0557D767_H_ */

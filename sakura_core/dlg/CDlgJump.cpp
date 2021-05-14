@@ -11,6 +11,7 @@
 	Copyright (C) 2002, aroka, MIK, YAZAKI
 	Copyright (C) 2004, genta
 	Copyright (C) 2006, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -24,8 +25,11 @@
 #include "util/shell.h"
 #include "util/os.h"
 #include "window/CEditWnd.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 // ジャンプ CDlgJump.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12800
@@ -249,9 +253,6 @@ void CDlgJump::SetData( void )
 	nIndex = 0;
 	nPLSQLBlockNum = 0;
 	for( i = 0; i < cFuncInfoArr.GetNum(); ++i ){
-		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ||
-			41 == cFuncInfoArr.GetAt( i )->m_nInfo ){
-		}
 		if( 31 == cFuncInfoArr.GetAt( i )->m_nInfo ){
 			if( m_pShareData->m_bLineNumIsCRLF_ForJump ){	/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				auto_sprintf( szText, LS(STR_DLGJUMP_PSLQL),

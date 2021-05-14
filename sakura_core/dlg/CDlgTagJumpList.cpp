@@ -10,6 +10,7 @@
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2010, Moca
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -41,6 +42,12 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/window.h"
+#include "util/tchar_convert.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
+#include "mem/CNativeA.h"
+#include "String_define.h"
+
 #include "sakura_rc.h"
 #include "sakura.hh"
 
@@ -522,9 +529,7 @@ BOOL CDlgTagJumpList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		bRet = FALSE;	//for set focus
 	}
 
-	m_comboDel = SComboBoxItemDeleter();
-	m_comboDel.pRecent = &m_cRecentKeyword;
-	SetComboBoxDeleter(hwndKey, &m_comboDel);
+	SetComboBoxDeleter(hwndKey, &m_cRecentKeyword);
 
 	/* 基底クラスメンバ */
 	CDialog::OnInitDialog( GetHwnd(), wParam, lParam );

@@ -11,6 +11,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2014, Moca
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -25,8 +26,12 @@
 #include "util/window.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 const DWORD p_helpids[] = {
 	IDC_BUTTON_FOLDER,				HIDC_GREP_REP_BUTTON_FOLDER,			//フォルダ
@@ -129,15 +134,16 @@ BOOL CDlgGrepReplace::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	/* コンボボックスのユーザー インターフェイスを拡張インターフェースにする */
 	Combo_SetExtendedUI( GetItemHwnd( IDC_COMBO_TEXT2 ), TRUE );
 
-	m_comboDelText2 = SComboBoxItemDeleter();
-	m_comboDelText2.pRecent = &m_cRecentReplace;
-	SetComboBoxDeleter( GetItemHwnd( IDC_COMBO_TEXT2 ), &m_comboDelText2 );
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT2), &m_cRecentReplace);
+
+	BOOL bRet = CDlgGrep::OnInitDialog( hwndDlg, wParam, lParam );
+	if( !bRet ) return bRet;
 
 	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT2 ), WM_GETFONT, 0, 0 );
 	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT2 ) );
 	m_cFontText2.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT2 ) );
 
-	return CDlgGrep::OnInitDialog( hwndDlg, wParam, lParam );
+	return bRet;
 }
 
 BOOL CDlgGrepReplace::OnDestroy()
@@ -196,10 +202,7 @@ int CDlgGrepReplace::GetData( void )
 	m_bPaste = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHK_PASTE );
 
 	/* 置換後 */
-	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT2) ) + 1;
-	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT2, &vText[0], nBufferSize);
-	m_strText2 = &vText[0];
+	ApiWrap::DlgItem_GetText(GetHwnd(), IDC_COMBO_TEXT2, m_strText2 );
 
 	if( 0 == ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) ){
 		WarningMessage(	GetHwnd(), LS(STR_DLGREPLC_REPSTR) );

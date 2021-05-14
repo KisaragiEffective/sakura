@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -37,63 +38,82 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "extmodule/CHtmlHelp.h"
+#include "config/app_constants.h"
+#include "String_define.h"
+#include <wrl.h>
 
-int CALLBACK MYBrowseCallbackProc(
-	HWND hwnd,
-	UINT uMsg,
-	LPARAM lParam,
-	LPARAM lpData
-)
-{
-	switch( uMsg ){
-	case BFFM_INITIALIZED:
-		::SendMessage( hwnd, BFFM_SETSELECTION, TRUE, (LPARAM)lpData );
-		break;
-	case BFFM_SELCHANGED:
-		break;
-	}
-	return 0;
-}
 
 /* フォルダ選択ダイアログ */
-BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName )
+BOOL SelectDir( HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount )
 {
-	BOOL	bRes;
-	WCHAR	szInitFolder[MAX_PATH];
-
-	wcscpy( szInitFolder, pszInitFolder );
-	/* フォルダの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない*/
-	CutLastYenFromDirectoryPath( szInitFolder );
-
-	// 2010.08.28 フォルダを開くとフックも含めて色々DLLが読み込まれるので移動
-	CCurrentDirectoryBackupPoint dirBack;
-	ChangeCurrentDirectoryToExeDir();
-
-	// SHBrowseForFolder()関数に渡す構造体
-	BROWSEINFO bi;
-	bi.hwndOwner = hWnd;
-	bi.pidlRoot = NULL;
-	bi.pszDisplayName = strFolderName;
-	bi.lpszTitle = pszTitle;
-	bi.ulFlags = BIF_RETURNONLYFSDIRS/* | BIF_EDITBOX*//* | BIF_STATUSTEXT*/;
-	bi.lpfn = MYBrowseCallbackProc;
-	bi.lParam = (LPARAM)szInitFolder;
-	bi.iImage = 0;
-	// アイテムＩＤリストを返す
-	// ITEMIDLISTはアイテムの一意を表す構造体
-	LPITEMIDLIST pList = ::SHBrowseForFolder(&bi);
-	if( NULL != pList ){
-		// SHGetPathFromIDList()関数はアイテムＩＤリストの物理パスを探してくれる
-		bRes = ::SHGetPathFromIDList( pList, strFolderName );
-		// :SHBrowseForFolder()で取得したアイテムＩＤリストを削除
-		::CoTaskMemFree( pList );
-		if( bRes ){
-			return TRUE;
-		}else{
-			return FALSE;
-		}
+	if ( nullptr == strFolderName ) {
+		return FALSE;
 	}
-	return FALSE;
+
+	using namespace Microsoft::WRL;
+	ComPtr<IFileDialog> pDialog;
+	HRESULT hres;
+
+	// インスタンスを作成
+	hres = CoCreateInstance( CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDialog) );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	// デフォルト設定を取得
+	DWORD dwOptions = 0;
+	hres = pDialog->GetOptions( &dwOptions );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	// オプションをフォルダを選択可能に変更
+	hres = pDialog->SetOptions( dwOptions | FOS_PICKFOLDERS | FOS_NOCHANGEDIR | FOS_FORCEFILESYSTEM );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	// 初期フォルダを設定
+	ComPtr<IShellItem> psiFolder;
+	hres = SHCreateItemFromParsingName( pszInitFolder, nullptr, IID_PPV_ARGS(&psiFolder) );
+	if ( SUCCEEDED(hres) ) {
+		pDialog->SetFolder( psiFolder.Get() );
+	}
+
+	// タイトル文字列を設定
+	hres = pDialog->SetTitle( pszTitle );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	// フォルダ選択ダイアログを表示
+	hres = pDialog->Show( hWnd );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	// 選択結果を取得
+	ComPtr<IShellItem> psiResult;
+	hres = pDialog->GetResult( &psiResult );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	PWSTR pszResult;
+	hres = psiResult->GetDisplayName( SIGDN_FILESYSPATH, &pszResult );
+	if ( FAILED(hres) ) {
+		return FALSE;
+	}
+
+	BOOL bRet = TRUE;
+	if ( 0 != wcsncpy_s( strFolderName, nMaxCount, pszResult, _TRUNCATE ) ) {
+		wcsncpy_s( strFolderName, nMaxCount, L"", _TRUNCATE );
+		bRet = FALSE;
+	}
+
+	CoTaskMemFree( pszResult );
+
+	return bRet;
 }
 
 /*!	特殊フォルダのパスを取得する
@@ -257,13 +277,19 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 */
 static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 {
-	// プロパティシートの初期化時にボタン追加、プロパティシートのサブクラス化を行う
+	// プロパティシートの初期化時にシステムフォント設定、ボタン追加、プロパティシートのサブクラス化を行う
 	if( uMsg == PSCB_INITIALIZED ){
-		s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
-		HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
-		HWND hwndBtn = ::CreateWindowEx( 0, L"BUTTON", LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
-		::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)::SendMessage( hwndDlg, WM_GETFONT, 0, 0 ), MAKELPARAM( FALSE, 0 ) );
-		::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		// システムフォント設定は言語設定に関係なく実施(force=TRUE)
+		HFONT hFont = UpdateDialogFont( hwndDlg, TRUE );
+
+		if( CShareData::getInstance()->IsPrivateSettings() ){
+			// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
+			s_pOldPropSheetWndProc = (WNDPROC)::SetWindowLongPtr( hwndDlg, GWLP_WNDPROC, (LONG_PTR)PropSheetWndProc );
+			HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( NULL );
+			HWND hwndBtn = ::CreateWindowEx( 0, WC_BUTTON, LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, NULL );
+			::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)hFont, MAKELPARAM( FALSE, 0 ) );
+			::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
+		}
 	}
 	return 0;
 }
@@ -274,11 +300,9 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, LPARAM lParam )
 */
 INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph )
 {
-	// 個人設定フォルダを使用するときは「設定フォルダ」ボタンを追加する
-	if( CShareData::getInstance()->IsPrivateSettings() ){
-		lppsph->dwFlags |= PSH_USECALLBACK;
-		lppsph->pfnCallback = PropSheetProc;
-	}
+	lppsph->dwFlags |= PSH_USECALLBACK;
+	lppsph->pfnCallback = PropSheetProc;
+
 	return ::PropertySheet( lppsph );
 }
 

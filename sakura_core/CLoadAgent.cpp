@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -36,6 +37,9 @@
 #include "uiparts/CVisualProgress.h"
 #include "util/file.h"
 #include "io/CFileLoad.h"
+#include "apiwrap/StdApi.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 ECallbackResult CLoadAgent::OnCheckLoad(SLoadInfo* pLoadInfo)
 {

@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2010, Uchi, Moca
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_
+#define SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_
 #pragma once
 
 #include "CDataProfile.h"
@@ -323,3 +326,4 @@ public:
 private:
 	std::vector<SFileTreeItem>&		m_aFileTreeItems;
 };
+#endif /* SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_ */

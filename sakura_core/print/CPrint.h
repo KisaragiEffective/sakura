@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2003, かろと
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,10 +30,13 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CPRINT_CB147282_3673_4A39_9B0A_C5C323C39C56_H_
+#define SAKURA_CPRINT_CB147282_3673_4A39_9B0A_C5C323C39C56_H_
 #pragma once
 
 #include <WinSpool.h>
 #include <CommDlg.h> // PRINTDLG
+#include "basis/primitive.h"
 
 struct	MYDEVMODE {
 	BOOL	m_bPrinterNotFound;	/* プリンタがなかったフラグ */
@@ -201,3 +205,4 @@ private:
 	HGLOBAL	m_hDevMode;							//!< 現在プリンタのDEVMODEへのメモリハンドル
 	HGLOBAL	m_hDevNames;						//!< 現在プリンタのDEVNAMESへのメモリハンドル
 };
+#endif /* SAKURA_CPRINT_CB147282_3673_4A39_9B0A_C5C323C39C56_H_ */

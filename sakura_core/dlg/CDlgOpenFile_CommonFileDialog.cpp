@@ -12,6 +12,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
 	Copyright (C) 2006, ryoji, Moca
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -39,8 +40,11 @@
 #include "util/module.h"
 #include "util/design_template.h"
 #include "basis/CMyString.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "String_define.h"
 
 static const DWORD p_helpids[] = {	//13100
 //	IDOK,					HIDOK_OPENDLG,		//Winのヘルプで勝手に出てくる
@@ -92,7 +96,7 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 
 	DLLSHAREDATA*	m_pShareData;
 
-	SFilePath		m_szDefaultWildCard;	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
 	std::vector<LPCWSTR>	m_vMRU;
@@ -118,9 +122,7 @@ public:
 
 	bool			m_bInitCodePage;
 
-	SComboBoxItemDeleter	m_combDelFile;
 	CRecentFile				m_cRecentFile;
-	SComboBoxItemDeleter	m_combDelFolder;
 	CRecentFolder			m_cRecentFolder;
 
 	OPENFILENAME*	m_pOf;
@@ -216,14 +218,14 @@ UINT_PTR CALLBACK OFNHookProc(
 	int						nIdx;
 	int						nIdxSel;
 	int						nWidth;
-	WPARAM					fCheck;	//	Jul. 26, 2003 ryoji BOM状態用
+	int						fCheck;	//	Jul. 26, 2003 ryoji BOM状態用
 
 	//	From Here	Feb. 9, 2001 genta
 	static const int		nEolValueArr[] = {
-		EOL_NONE,
-		EOL_CRLF,
-		EOL_LF,
-		EOL_CR,
+		static_cast<int>(EEolType::none),
+		static_cast<int>(EEolType::cr_and_lf),
+		static_cast<int>(EEolType::line_feed),
+		static_cast<int>(EEolType::carriage_return),
 	};
 	//	文字列はResource内に入れる
 	static const WCHAR*	const	pEolNameArr[] = {
@@ -262,6 +264,8 @@ UINT_PTR CALLBACK OFNHookProc(
 		}
 	case WM_INITDIALOG:
 		{
+			UpdateDialogFont( hdlg );
+
 			// Save off the long pointer to the OPENFILENAME structure.
 			// Modified by KEITA for WIN64 2003.9.6
 			OPENFILENAME* pOfn = (OPENFILENAME*)lParam;
@@ -302,7 +306,7 @@ UINT_PTR CALLBACK OFNHookProc(
 						nIdx = Combo_AddString( pData->m_hwndComboEOL, pEolNameArr[i] );
 					}
 					Combo_SetItemData( pData->m_hwndComboEOL, nIdx, nEolValueArr[i] );
-					if( nEolValueArr[i] == pData->m_cEol ){
+					if( nEolValueArr[i] == static_cast<int>(pData->m_cEol.GetType()) ){
 						nIdxSel = nIdx;
 					}
 				}
@@ -370,13 +374,6 @@ UINT_PTR CALLBACK OFNHookProc(
 
 			/* ビューモードの初期値セット */
 			::CheckDlgButton( pData->m_hwndOpenDlg, chx1, pData->m_bViewMode );
-
-			pData->m_combDelFile = SComboBoxItemDeleter();
-			pData->m_combDelFile.pRecent = &pData->m_cRecentFile;
-			CDialog::SetComboBoxDeleter(pData->m_hwndComboMRU, &pData->m_combDelFile);
-			pData->m_combDelFolder = SComboBoxItemDeleter();
-			pData->m_combDelFolder.pRecent = &pData->m_cRecentFolder;
-			CDialog::SetComboBoxDeleter(pData->m_hwndComboOPENFOLDER, &pData->m_combDelFolder);
 		}
 		break;
 
@@ -424,7 +421,7 @@ UINT_PTR CALLBACK OFNHookProc(
 						else{
 							switch( pData->m_pOf->nFilterIndex ){	// 選択されているファイルの種類
 							case 1:		// ユーザー定義
-								pszCur = pData->m_pcDlgOpenFile->m_szDefaultWildCard;
+								pszCur = pData->m_pcDlgOpenFile->m_strDefaultWildCard.data();
 								while( *pszCur != L'.' && *pszCur != L'\0' )	// '.'まで読み飛ばす
 									pszCur = ::CharNext(pszCur);
 								i = 0;
@@ -673,8 +670,6 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
 
-	wcscpy( m_szDefaultWildCard, L"*.*" );	/*「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
-
 	return;
 }
 
@@ -693,7 +688,7 @@ void CDlgOpenFile_CommonFileDialog::Create(
 
 	/* ユーザー定義ワイルドカード（保存時の拡張子補完でも使用される） */
 	if( NULL != pszUserWildCard ){
-		wcscpy( m_szDefaultWildCard, pszUserWildCard );
+		m_strDefaultWildCard = pszUserWildCard;
 	}
 
 	/* 「開く」での初期フォルダ */
@@ -728,7 +723,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
 
 	switch( eAddFilter ){
 	case EFITER_TEXT:
@@ -746,7 +741,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		break;
 	}
 
-	if( 0 != wcscmp(m_szDefaultWildCard, L"*.*") ){
+	if (m_strDefaultWildCard != L"*.*") {
 		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	}
 
@@ -821,7 +816,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 	
@@ -985,7 +980,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_szDefaultWildCard );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
 

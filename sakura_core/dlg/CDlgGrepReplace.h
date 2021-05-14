@@ -8,10 +8,13 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, Moca
 	Copyright (C) 2014, Moca
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#ifndef SAKURA_CDLGGREPREPLACE_D97F4D2D_9963_40FB_91C1_5A6FF0407E99_H_
+#define SAKURA_CDLGGREPREPLACE_D97F4D2D_9963_40FB_91C1_5A6FF0407E99_H_
 #pragma once
 
 class CDlgGrep;
@@ -40,7 +43,6 @@ public:
 
 protected:
 	CRecentReplace			m_cRecentReplace;
-	SComboBoxItemDeleter	m_comboDelText2;
 	CFontAutoDeleter		m_cFontText2;
 
 	/*
@@ -54,3 +56,4 @@ protected:
 	void SetData( void ) override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;	/* ダイアログデータの取得 */
 };
+#endif /* SAKURA_CDLGGREPREPLACE_D97F4D2D_9963_40FB_91C1_5A6FF0407E99_H_ */

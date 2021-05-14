@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2000-2003, genta
 	Copyright (C) 2003, Moca
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +30,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CIMAGELISTMGR_4FA1F1E8_0029_42BD_A346_C51BB0A70B0C_H_
+#define SAKURA_CIMAGELISTMGR_4FA1F1E8_0029_42BD_A346_C51BB0A70B0C_H_
 #pragma once
 
 #include "_main/global.h"
@@ -126,3 +129,4 @@ protected:
 	//! ビットマップを一行拡張する
 	void Extend(bool = true);
 };
+#endif /* SAKURA_CIMAGELISTMGR_4FA1F1E8_0029_42BD_A346_C51BB0A70B0C_H_ */

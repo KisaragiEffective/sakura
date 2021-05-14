@@ -4,6 +4,7 @@
 	Copyright (C) 2008, kobake
 	Copyright (C) 2010, Uchi, Moca
 	Copyright (C) 2012, aroka, Uchi
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -32,6 +33,10 @@
 #include "util/os.h"
 #include "util/window.h"
 #include "uiparts/CImageListMgr.h"
+#include "apiwrap/CommonControl.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
+#include "String_define.h"
 
 CMainToolBar::CMainToolBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
@@ -290,7 +295,7 @@ void CMainToolBar::CreateToolBar( void )
 						Toolbar_GetItemRect( m_hwndToolBar, count-1, &rc );
 
 						//コンボボックスを作る
-						m_hwndSearchBox = CreateWindow( L"COMBOBOX", L"Combo",
+						m_hwndSearchBox = CreateWindow( WC_COMBOBOX, L"Combo",
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
 								rc.left, rc.top, rc.right - rc.left, (rc.bottom - rc.top) * 10,
@@ -327,19 +332,17 @@ void CMainToolBar::CreateToolBar( void )
 							//検索ボックスを更新	// 関数化 2010/6/6 Uchi
 							AcceptSharedSearchKey();
 
-							m_comboDel = SComboBoxItemDeleter(); // 再表示用の初期化
-							m_comboDel.pRecent = &m_cRecentSearch;
-							CDialog::SetComboBoxDeleter(m_hwndSearchBox, &m_comboDel);
+							CDialog::SetComboBoxDeleter(m_hwndSearchBox, &m_cRecentSearch);
 
-							// コンボボックスの垂直位置を調整する
+							// コンボボックスの位置と幅を調整する
 							CMyRect rcCombo;
 							::GetWindowRect( m_hwndSearchBox, &rcCombo );
 							::SetWindowPos( m_hwndSearchBox, NULL,
-								rc.left,	//作ったときと同じ値を指定
-								(rc.bottom - rc.top - rcCombo.Height()) / 2,	//上下中央に配置する
-								0,			//rcCombo.Width()のまま変えない
-								0,			//rcCombo.Height()のまま変えない
-								SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING );
+								rc.left + cxBorder,
+								rc.top + (rc.bottom - rc.top - rcCombo.Height()) / 2,
+								rcCombo.Width() - cxBorder * 2,
+								rcCombo.Height(),
+								SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOSENDCHANGING );
 						}
 						break;
 
@@ -535,20 +538,25 @@ void CMainToolBar::UpdateToolbar( void )
 			TBBUTTON tbb = m_pOwner->GetMenuDrawer().getButton(
 				GetDllShareData().m_Common.m_sToolBar.m_nToolBarButtonIdxArr[i]
 			);
-
-			// 機能が利用可能か調べる
-			Toolbar_EnableButton(
-				m_hwndToolBar,
-				tbb.idCommand,
-				IsFuncEnable( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
-			);
-
-			// 機能がチェック状態か調べる
-			Toolbar_CheckButton(
-				m_hwndToolBar,
-				tbb.idCommand,
-				IsFuncChecked( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand )
-			);
+			int state = Toolbar_GetState( m_hwndToolBar, tbb.idCommand );
+			if( state != -1 )
+			{
+				WORD stateToSet = state & ~(TBSTATE_ENABLED | TBSTATE_CHECKED);
+				// 機能が利用可能か調べる
+				if( IsFuncEnable( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
+				{
+					stateToSet |= TBSTATE_ENABLED;
+				}
+				// 機能がチェック状態か調べる
+				if( IsFuncChecked( m_pOwner->GetDocument(), &GetDllShareData(), (EFunctionCode)tbb.idCommand ) )
+				{
+					stateToSet |= TBSTATE_CHECKED;
+				}
+				if( state != stateToSet )
+				{
+					Toolbar_SetState( m_hwndToolBar, tbb.idCommand, stateToSet );
+				}
+			}
 		}
 	}
 }
@@ -591,10 +599,7 @@ void CMainToolBar::AcceptSharedSearchKey()
 int CMainToolBar::GetSearchKey(std::wstring& strText)
 {
 	if( m_hwndSearchBox ){
-		int nBufferSize = ::GetWindowTextLength( m_hwndSearchBox ) + 1;
-		auto vText = std::make_unique<WCHAR[]>(nBufferSize);
-		::GetWindowText( m_hwndSearchBox, &vText[0], nBufferSize);
-		strText = &vText[0];
+		ApiWrap::Wnd_GetText( m_hwndSearchBox, strText );
 	}else{
 		strText = L"";
 	}

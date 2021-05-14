@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_BUILD_CONFIG_DB7D8D47_EA6A_4ABF_A081_A31875D78808_H_
+#define SAKURA_BUILD_CONFIG_DB7D8D47_EA6A_4ABF_A081_A31875D78808_H_
 #pragma once
 
 //ビルド(コンパイル)設定
@@ -110,3 +113,4 @@ static const bool UNICODE_BOOL=true;
 #if _WIN64
 #define ALPHA_VERSION
 #endif
+#endif /* SAKURA_BUILD_CONFIG_DB7D8D47_EA6A_4ABF_A081_A31875D78808_H_ */

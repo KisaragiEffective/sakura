@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CRULER_2D5B66C2_E499_4C3D_8113_F26B9C28F940_H_
+#define SAKURA_CRULER_2D5B66C2_E499_4C3D_8113_F26B9C28F940_H_
 #pragma once
 
 class CTextArea;
@@ -72,3 +75,4 @@ private:
 	std::vector<POINT> m_apt;
 	std::vector<DWORD> m_asz;
 };
+#endif /* SAKURA_CRULER_2D5B66C2_E499_4C3D_8113_F26B9C28F940_H_ */

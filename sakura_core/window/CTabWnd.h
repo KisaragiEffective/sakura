@@ -12,6 +12,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2012, Moca, syat
 	Copyright (C) 2013, Uchi, aroka, novice, syat, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -34,10 +35,13 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CTABWND_E95D57BD_51E6_467A_9F6D_2C68BF122449_H_
+#define SAKURA_CTABWND_E95D57BD_51E6_467A_9F6D_2C68BF122449_H_
 #pragma once
 
 #include "CWnd.h"
 #include "util/design_template.h"
+#include "env/CommonSetting.h"
 
 class CGraphics;
 struct EditNode;
@@ -204,3 +208,4 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CTabWnd);
 };
+#endif /* SAKURA_CTABWND_E95D57BD_51E6_467A_9F6D_2C68BF122449_H_ */

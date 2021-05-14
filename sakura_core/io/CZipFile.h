@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2011, Uchi
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CZIPFILE_EA7F9762_A67F_449D_B346_EAB3075A9E2C_H_
+#define SAKURA_CZIPFILE_EA7F9762_A67F_449D_B346_EAB3075A9E2C_H_
 #pragma once
 
 #include <ShlDisp.h>
@@ -45,3 +48,4 @@ public:
 	bool	ChkPluginDef(const std::wstring& sDefFile, std::wstring& sFolderName);	// ZIP File 内 フォルダ名取得と定義ファイル検査(Plugin用)
 	bool	Unzip(const std::wstring sOutPath);			// Zip File 解凍
 };
+#endif /* SAKURA_CZIPFILE_EA7F9762_A67F_449D_B346_EAB3075A9E2C_H_ */

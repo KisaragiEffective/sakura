@@ -18,6 +18,7 @@
 	Copyright (C) 2009, nasukoji
 	Copyright (C) 2010, Moca
 	Copyright (C) 2012, ryoji, Uchi
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -29,6 +30,7 @@
 #include "window/CEditWnd.h"
 #include "types/CTypeSupport.h"
 #include <limits.h>
+#include "config/app_constants.h"
 
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
@@ -40,7 +42,7 @@ BOOL CEditView::CreateScrollBar()
 	/* スクロールバーの作成 */
 	m_hwndVScrollBar = ::CreateWindowEx(
 		0L,									/* no extended styles */
-		L"SCROLLBAR",					/* scroll bar control class */
+		WC_SCROLLBAR,						/* scroll bar control class */
 		NULL,								/* text for window title bar */
 		WS_VISIBLE | WS_CHILD | SBS_VERT,	/* scroll bar styles */
 		0,									/* horizontal position */
@@ -67,7 +69,7 @@ BOOL CEditView::CreateScrollBar()
 	if( GetDllShareData().m_Common.m_sWindow.m_bScrollBarHorz && !m_bMiniMap ){	/* 水平スクロールバーを使う */
 		m_hwndHScrollBar = ::CreateWindowEx(
 			0L,									/* no extended styles */
-			L"SCROLLBAR",					/* scroll bar control class */
+			WC_SCROLLBAR,						/* scroll bar control class */
 			NULL,								/* text for window title bar */
 			WS_VISIBLE | WS_CHILD | SBS_HORZ,	/* scroll bar styles */
 			0,									/* horizontal position */

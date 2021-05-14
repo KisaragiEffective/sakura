@@ -7,16 +7,21 @@
 /*
 	Copyright (C) 2002, aroka 新規作成
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_
+#define SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_
 #pragma once
 
+#include <filesystem>
+
 #include "global.h"
+#include "util/design_template.h"
 #include "env/CShareData.h"
-#include "env/DLLSHAREDATA.h"
 
 #ifdef MINIDUMP_TYPE
 #define USE_CRASHDUMP
@@ -34,6 +39,9 @@ public:
 	bool Run();
 	virtual ~CProcess(){}
 	virtual void RefreshString();
+
+	virtual std::filesystem::path GetIniFileName() const;
+
 protected:
 	CProcess();
 	virtual bool InitializeProcess();
@@ -47,8 +55,10 @@ protected:
 #endif
 public:
 	HINSTANCE		GetProcessInstance() const{ return m_hInstance; }
-	CShareData&		GetShareData()   { return *m_pcShareData; }
+	CShareData&		GetShareData()   { return m_cShareData; }
 	HWND			GetMainWindow() const{ return m_hWnd; }
+
+	[[nodiscard]] const CShareData* GetShareDataPtr() const { return &m_cShareData; }
 
 private:
 	HINSTANCE	m_hInstance;
@@ -64,7 +74,8 @@ private:
 		PMINIDUMP_CALLBACK_INFORMATION CallbackParam
 		);
 #endif
-	CShareData*		m_pcShareData;
+	CShareData		m_cShareData;
 
 private:
 };
+#endif /* SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_ */

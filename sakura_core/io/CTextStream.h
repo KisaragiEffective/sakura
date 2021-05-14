@@ -8,6 +8,7 @@
 //将来はUTF-8等にすることにより、UNICODEデータの欠落が起こらないようにしたい。
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,11 +30,15 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CTEXTSTREAM_CF4FEC73_4575_4B80_98F7_CFCBC0B433CD_H_
+#define SAKURA_CTEXTSTREAM_CF4FEC73_4575_4B80_98F7_CFCBC0B433CD_H_
 #pragma once
 
 #include <string>
 
 #include "CStream.h"
+#include "charset/charset.h"
+
 class CCodeBase;
 
 //テキスト入力ストリーム (UTF-8, SJIS)
@@ -75,3 +80,4 @@ class CTextInputStream_AbsIni final : public CTextInputStream{
 public:
 	CTextInputStream_AbsIni(const WCHAR* pszPath, bool bOrExedir = true);
 };
+#endif /* SAKURA_CTEXTSTREAM_CF4FEC73_4575_4B80_98F7_CFCBC0B433CD_H_ */

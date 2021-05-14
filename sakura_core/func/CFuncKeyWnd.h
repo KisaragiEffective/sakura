@@ -8,10 +8,13 @@
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2006, aroka
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
+#ifndef SAKURA_CFUNCKEYWND_2EB0FD88_ABBB_4280_BEEA_46E8468E4550_H_
+#define SAKURA_CFUNCKEYWND_2EB0FD88_ABBB_4280_BEEA_46E8468E4550_H_
 #pragma once
 
 #include "window/CWnd.h"
@@ -69,3 +72,4 @@ protected:
 	LRESULT OnSize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;// WM_SIZE処理
 	LRESULT OnDestroy(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;// WM_DESTROY処理
 };
+#endif /* SAKURA_CFUNCKEYWND_2EB0FD88_ABBB_4280_BEEA_46E8468E4550_H_ */

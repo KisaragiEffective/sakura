@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,7 +23,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_
+#define SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_
 #pragma once
+
+#include "CEol.h"
+#include "types/CType.h"
 
 class CEditView;
 enum EFunctionCode;
@@ -34,7 +40,7 @@ class CEditWnd;
 class CColorStrategy;
 class CColorStrategyPool;
 class CSMacroMgr;
-#include "CEol.h"
+class CStringRef;
 
 class CViewCommander{
 public:
@@ -210,7 +216,7 @@ public:
 
 	/* クリップボード系 */
 	void Command_CUT( void );						/* 切り取り（選択範囲をクリップボードにコピーして削除）*/
-	void Command_COPY( bool bIgnoreLockAndDisable, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN );/* コピー(選択範囲をクリップボードにコピー) */
+	void Command_COPY( bool bIgnoreLockAndDisable, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::auto_detect );/* コピー(選択範囲をクリップボードにコピー) */
 	void Command_PASTE( int option );						/* 貼り付け（クリップボードから貼り付け）*/
 	void Command_PASTEBOX( int option );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
@@ -289,6 +295,7 @@ public:
 // To Here 2001.12.03 hor
 	// Apr. 03, 2003 genta 引数追加
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
+	bool Command_TagJumpNoMessage( bool bClose );		// タグジャンプ機能(メッセージ通知なし)
 	void Command_TAGJUMPBACK( void );					/* タグジャンプバック機能 */
 	bool Command_TagJumpByTagsFileMsg(bool bMsg);				//ダイレクトタグジャンプ(通知つき)
 	bool Command_TagJumpByTagsFile(bool bClose);				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
@@ -411,3 +418,4 @@ public:
 	CLogicInt ConvertEol(const wchar_t* pszText, CLogicInt nTextLen, wchar_t* pszConvertedText);
 	void Sub_BoxSelectLock( int flags );
 };
+#endif /* SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_ */

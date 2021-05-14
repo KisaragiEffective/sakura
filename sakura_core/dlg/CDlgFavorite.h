@@ -7,6 +7,7 @@
 /*
 	Copyright (C) 2003, MIK
 	Copyright (C) 2010, Moca
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +30,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CDLGFAVORITE_D3C5AE69_3DBD_4C29_9918_BCC0D3BE61FE_H_
+#define SAKURA_CDLGFAVORITE_D3C5AE69_3DBD_4C29_9918_BCC0D3BE61FE_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -137,3 +140,4 @@ private:
 
 	static void  ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, int column, bool bReverse);
 };
+#endif /* SAKURA_CDLGFAVORITE_D3C5AE69_3DBD_4C29_9918_BCC0D3BE61FE_H_ */

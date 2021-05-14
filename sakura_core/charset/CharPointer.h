@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,9 +23,12 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CHARPOINTER_B649A129_0BBB_4ABE_BE02_0389CF537319_H_
+#define SAKURA_CHARPOINTER_B649A129_0BBB_4ABE_BE02_0389CF537319_H_
 #pragma once
 
 #include "charset/charcode.h"
+#include "charset/codechecker.h"
 
 //!< ディレクトリを除いた、ファイル名だけを取得する
 class CharPointerA{
@@ -108,3 +112,4 @@ private:
 };
 
 typedef CharPointerW CharPointerT;
+#endif /* SAKURA_CHARPOINTER_B649A129_0BBB_4ABE_BE02_0389CF537319_H_ */

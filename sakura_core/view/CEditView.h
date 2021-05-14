@@ -16,6 +16,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, nasukoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -38,6 +39,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CEDITVIEW_54DE503F_6F97_4A16_8165_27F5F0D232E2_H_
+#define SAKURA_CEDITVIEW_54DE503F_6F97_4A16_8165_27F5F0D232E2_H_
 #pragma once
 
 #include <Windows.h>
@@ -90,19 +93,6 @@ class CColor_Found;
 #ifndef IDM_JUMPDICT
 #define IDM_JUMPDICT 2001	// 2006.04.10 fon
 #endif
-
-#if !defined(RECONVERTSTRING) && (WINVER < 0x040A)
-typedef struct tagRECONVERTSTRING {
-    DWORD dwSize;
-    DWORD dwVersion;
-    DWORD dwStrLen;
-    DWORD dwStrOffset;
-    DWORD dwCompStrLen;
-    DWORD dwCompStrOffset;
-    DWORD dwTargetStrLen;
-    DWORD dwTargetStrOffset;
-} RECONVERTSTRING, *PRECONVERTSTRING;
-#endif // RECONVERTSTRING
 
 ///	マウスからコマンドが実行された場合の上位ビット
 ///	@date 2006.05.19 genta
@@ -238,8 +228,7 @@ public:
 protected:
 	//! ロジック行を1行描画
 	bool DrawLogicLine(
-		HDC				hdc,			//!< [in]     作画対象
-		DispPos*		pDispPos,		//!< [in,out] 描画する箇所、描画元ソース
+		SColorStrategyInfo* pInfo,		//!< [in,out] 作画情報
 		CLayoutInt		nLineTo			//!< [in]     作画終了するレイアウト行番号
 	);
 
@@ -333,7 +322,7 @@ public:
 	// 2002/01/19 novice public属性に変更
 	bool GetSelectedDataSimple( CNativeW& cmemBuf );// 選択範囲のデータを取得
 	bool GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen );
-	bool GetSelectedData( CNativeW* cmemBuf, BOOL bLineOnly, const wchar_t* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EOL_UNKNOWN);/* 選択範囲のデータを取得 */
+	bool GetSelectedData( CNativeW* cmemBuf, BOOL bLineOnly, const wchar_t* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::auto_detect);/* 選択範囲のデータを取得 */
 	int IsCurrentPositionSelected( CLayoutPoint ptCaretPos );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( const CLayoutPoint& ptCaretPos, const CLayoutRange& sSelect ) const;/* 指定カーソル位置が選択エリア内にあるか */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
@@ -777,3 +766,4 @@ public:
 	virtual bool IsEnableRunningDlg(){ return true; }
 	virtual bool IsActiveDebugWindow(){ return true; }
 };
+#endif /* SAKURA_CEDITVIEW_54DE503F_6F97_4A16_8165_27F5F0D232E2_H_ */

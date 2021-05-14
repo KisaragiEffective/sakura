@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_
+#define SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_
 #pragma once
 
 #include "plugin/CPlugin.h"
@@ -70,3 +73,4 @@ private:
 	wstring m_sBaseDir;					//pluginsフォルダのパス
 	wstring m_sExePluginDir;			//Exeフォルダ配下pluginsフォルダのパス
 };
+#endif /* SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_ */

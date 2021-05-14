@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSTREAM_0083EDD7_A671_4315_801D_41FED1A2E3DA_H_
+#define SAKURA_CSTREAM_0083EDD7_A671_4315_801D_41FED1A2E3DA_H_
 #pragma once
 
 class CFileAttribute;
@@ -90,10 +93,11 @@ public:
 	}
 
 	//! データを無変換で書き込む。戻り値は書き込んだバイト数。
-	int Write(const void* pBuffer, int nSizeInBytes)
+	int Write(const void* pBuffer, size_t nSizeInBytes)
 	{
-		int nRet = fwrite(pBuffer,1,nSizeInBytes,GetFp());
+		size_t nRet = ::fwrite(pBuffer, 1, nSizeInBytes, GetFp());
 		if(nRet!=nSizeInBytes && IsExceptionMode())throw CError_FileWrite();
-		return nRet;
+		return static_cast<int>(nRet);
 	}
 };
+#endif /* SAKURA_CSTREAM_0083EDD7_A671_4315_801D_41FED1A2E3DA_H_ */

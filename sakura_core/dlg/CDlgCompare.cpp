@@ -11,6 +11,7 @@
 	Copyright (C) 2003, MIK
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -23,8 +24,11 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/string_ex2.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
 
 // ファイル内容比較 CDlgCompare.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12300
@@ -66,12 +70,10 @@ int CDlgCompare::DoModal(
 	HWND			hwndParent,
 	LPARAM			lParam,
 	const WCHAR*	pszPath,
-	WCHAR*			pszCompareLabel,
 	HWND*			phwndCompareWnd
 )
 {
 	m_pszPath = pszPath;
-	m_pszCompareLabel = pszCompareLabel;
 	m_phwndCompareWnd = phwndCompareWnd;
 	return CDialog::DoModal( hInstance, hwndParent, IDD_COMPARE, lParam );
 }
@@ -203,22 +205,13 @@ int CDlgCompare::GetData( void )
 {
 	HWND			hwndList;
 	int				nItem;
-	EditInfo*		pfi;
 	hwndList = GetItemHwnd( IDC_LIST_FILES );
 	nItem = List_GetCurSel( hwndList );
 	if( LB_ERR == nItem ){
 		return FALSE;
 	}else{
 		*m_phwndCompareWnd = (HWND)List_GetItemData( hwndList, nItem );
-		/* トレイからエディタへの編集ファイル名要求通知 */
-		::SendMessageAny( *m_phwndCompareWnd, MYWM_GETFILEINFO, 0, 0 );
-		pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
-		// 2010.07.30 パス名はやめて表示名に変更
-		int nId = CAppNodeManager::getInstance()->GetEditNode( *m_phwndCompareWnd )->GetId();
-		CTextWidthCalc calc(hwndList);
-		CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( m_pszCompareLabel, _MAX_PATH/*長さ不明*/, pfi, nId, -1, calc.GetDC() );
-	
 		/* 左右に並べて表示 */
 		m_bCompareAndTileHorz = ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_TILE_H );
 

@@ -6,11 +6,14 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_COPE_45A75845_2C52_4602_9236_743A423DF1DB_H_
+#define SAKURA_COPE_45A75845_2C52_4602_9236_743A423DF1DB_H_
 #pragma once
 
 #include <vector>
@@ -132,3 +135,4 @@ public:
 		m_ptCaretPos_PHY_After = ptCaretPos;
 	}
 };
+#endif /* SAKURA_COPE_45A75845_2C52_4602_9236_743A423DF1DB_H_ */

@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2020 Sakura Editor Organization
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +22,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CICU4CI18N_16EE9B14_2791_4C5D_AE1E_E78FBF5CB083_H_
+#define SAKURA_CICU4CI18N_16EE9B14_2791_4C5D_AE1E_E78FBF5CB083_H_
 #pragma once
 
 #include "CDllHandler.h"
@@ -55,7 +57,6 @@ class CIcu4cI18n final : public CDllImp
 
 public:
 	CIcu4cI18n() noexcept;
-	virtual ~CIcu4cI18n() noexcept;
 
 protected:
 	// CDllImpインタフェース
@@ -79,3 +80,4 @@ public:
 		return _ucsdet_close(ucsd);
 	}
 };
+#endif /* SAKURA_CICU4CI18N_16EE9B14_2791_4C5D_AE1E_E78FBF5CB083_H_ */

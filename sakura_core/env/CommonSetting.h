@@ -2,6 +2,7 @@
 //2007.09.28 kobake Common整理
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -23,12 +24,15 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_COMMONSETTING_2CBDBC26_EA7F_466E_842F_AFB0D93207D2_H_
+#define SAKURA_COMMONSETTING_2CBDBC26_EA7F_466E_842F_AFB0D93207D2_H_
 #pragma once
 
 #include "CKeyWordSetMgr.h"
 #include "func/CKeyBind.h"
 #include "func/CFuncLookup.h" //MacroRec
 #include "io/CFile.h" //EShareMode
+#include "basis/SakuraBasis.h"
 
 // Apr. 05, 2003 genta WindowCaption用領域（変換前）の長さ
 static const int MAX_CAPTION_CONF_LEN = 256;
@@ -744,3 +748,4 @@ struct CommonSetting
 	CommonSetting_Plugin			m_sPlugin;			//!< プラグイン 2009/11/30 syat
 	CommonSetting_MainMenu			m_sMainMenu;		//!< メインメニュー		// 2010/5/15 Uchi
 };
+#endif /* SAKURA_COMMONSETTING_2CBDBC26_EA7F_466E_842F_AFB0D93207D2_H_ */

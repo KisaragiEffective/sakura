@@ -10,14 +10,18 @@
 	Copyright (C) 2003, MIK
 	Copyright (C) 2005, aroka, genta
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CMENUDRAWER_F2B94603_89D1_4064_A93E_3634A0A6FAD4_H_
+#define SAKURA_CMENUDRAWER_F2B94603_89D1_4064_A93E_3634A0A6FAD4_H_
 #pragma once
 
 #include "Funccode_enum.h"
+#include "mem/CNativeW.h"
 
 class CMenuDrawer;
 
@@ -125,3 +129,4 @@ protected:
 						 BYTE fsState, BYTE fsStyle, DWORD_PTR dwData,
 						 INT_PTR iString ) const;	/* TBBUTTON構造体にデータをセット */
 };
+#endif /* SAKURA_CMENUDRAWER_F2B94603_89D1_4064_A93E_3634A0A6FAD4_H_ */

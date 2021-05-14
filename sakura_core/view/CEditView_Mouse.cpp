@@ -15,6 +15,7 @@
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -39,7 +40,12 @@
 #include "util/os.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeFactory.h"
+#include "apiwrap/StdApi.h"
+#include "CSelectLang.h"
+#include "mem/CNativeA.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //
@@ -422,8 +428,6 @@ normal_action:;
 					}
 				}
 
-				if( 0 < nWorkRel ){
-				}
 				/* 選択領域描画 */
 				GetSelectionInfo().DrawSelectArea();
 			}
@@ -2087,7 +2091,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, TRUE );
 
 	// ダミーの STATIC を作ってフォーカスを当てる（エディタが前面に出ないように）
-	HWND hwnd = ::CreateWindow(L"STATIC", L"", 0, 0, 0, 0, 0, NULL, NULL, G_AppInstance(), NULL );
+	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, NULL, NULL, G_AppInstance(), NULL );
 	::SetFocus(hwnd);
 
 	// メニューを作成する

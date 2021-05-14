@@ -1,4 +1,27 @@
 ﻿/*! @file */
+/*
+	Copyright (C) 2018-2021, Sakura Editor Organization
+
+	This software is provided 'as-is', without any express or implied
+	warranty. In no event will the authors be held liable for any damages
+	arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any purpose,
+	including commercial applications, and to alter it and redistribute it
+	freely, subject to the following restrictions:
+
+		1. The origin of this software must not be misrepresented;
+		   you must not claim that you wrote the original software.
+		   If you use this software in a product, an acknowledgment
+		   in the product documentation would be appreciated but is
+		   not required.
+
+		2. Altered source versions must be plainly marked as such,
+		   and must not be misrepresented as being the original software.
+
+		3. This notice may not be removed or altered from any source
+		   distribution.
+*/
 #include "StdAfx.h"
 #include "CGrepAgent.h"
 #include "CGrepEnumKeys.h"
@@ -20,9 +43,14 @@
 #include "util/module.h"
 #include "util/string_ex2.h"
 #include "debug/CRunningTimer.h"
+#include <iterator>
 #include <deque>
 #include <memory>
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 #define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
@@ -113,43 +141,21 @@ void CGrepAgent::OnAfterSave(const SSaveInfo& sSaveInfo)
 */
 void CGrepAgent::CreateFolders( const WCHAR* pszPath, std::vector<std::wstring>& vPaths )
 {
-	const int nPathLen = wcslen( pszPath );
-	auto szPath = std::make_unique<WCHAR[]>(nPathLen + 1);
-	auto szTmp = std::make_unique<WCHAR[]>(nPathLen + 1);
-	wcscpy( &szPath[0], pszPath );
+	std::wstring strPath( pszPath );
+	const int nPathLen = static_cast<int>( strPath.length() );
+
 	WCHAR* token;
 	int nPathPos = 0;
-	while( NULL != (token = my_strtok<WCHAR>( &szPath[0], nPathLen, &nPathPos, L";")) ){
-		wcscpy( &szTmp[0], token );
-		WCHAR* p;
-		WCHAR* q;
-		p = q = &szTmp[0];
-		while( *p ){
-			if( *p != L'"' ){
-				if( p != q ){
-					*q = *p;
-				}
-				q++;
-			}
-			p++;
-		}
-		*q = L'\0';
-#if 0
-		// 2011.12.25 仕様変更。最後の\\は取り除く
-		int	nFolderLen = q - &szTmp[0];
-		if( 0 < nFolderLen ){
-			int nCharChars = &szTmp[nFolderLen] - CNativeW::GetCharPrev( &szTmp[0], nFolderLen, &szTmp[nFolderLen] );
-			if( 1 == nCharChars && (L'\\' == szTmp[nFolderLen - 1] || L'/' == szTmp[nFolderLen - 1]) ){
-				szTmp[nFolderLen - 1] = L'\0';
-			}
-		}
-#endif
+	while( NULL != (token = my_strtok<WCHAR>( strPath.data(), nPathLen, &nPathPos, L";")) ){
+		std::wstring strTemp( token );
+		// パスに含まれる '"' を削除する
+		strTemp.erase( std::remove( strTemp.begin(), strTemp.end(), L'"' ), strTemp.end() );
 		/* ロングファイル名を取得する */
 		WCHAR szTmp2[_MAX_PATH];
-		if( ::GetLongFileName( &szTmp[0], szTmp2 ) ){
+		if( ::GetLongFileName( strTemp.c_str(), szTmp2 ) ){
 			vPaths.push_back( szTmp2 );
 		}else{
-			vPaths.push_back( &szTmp[0] );
+			vPaths.emplace_back( strTemp );
 		}
 	}
 }
@@ -1499,13 +1505,13 @@ int CGrepAgent::DoGrepFile(
 	// ファイルを明示的に閉じるが、ここで閉じないときはデストラクタで閉じている
 	cfl.FileClose();
 	} // try
-	catch( CError_FileOpen ){
+	catch( const CError_FileOpen& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEOPEN));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
-	catch( CError_FileRead ){
+	catch( const CError_FileRead& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEREAD));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
@@ -1553,7 +1559,7 @@ public:
 			name += L".skrnew";
 			try{
 				out = new CBinaryOutputStream(name.c_str(), true);
-			}catch( CError_FileOpen ){
+			}catch( const CError_FileOpen& ){
 				throw CError_WriteFileOpen();
 			}
 			if( bBom ){
@@ -1938,18 +1944,18 @@ int CGrepAgent::DoGrepReplaceFile(
 	cfl.FileClose();
 	output.Close();
 	} // try
-	catch( CError_FileOpen ){
+	catch( const CError_FileOpen& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEOPEN));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 		return 0;
 	}
-	catch( CError_FileRead ){
+	catch( const CError_FileRead& ){
 		CNativeW str(LS(STR_GREP_ERR_FILEREAD));
 		str.Replace(L"%s", pszFullPath);
 		cmemMessage.AppendNativeData( str );
 	}
-	catch( CError_WriteFileOpen ){
+	catch( const CError_WriteFileOpen& ){
 		std::wstring file = pszFullPath;
 		file += L".skrnew";
 		CNativeW str(LS(STR_GREP_ERR_FILEWRITE));

@@ -10,12 +10,15 @@
 /*
 	Copyright (C) 2002, 鬼, genta
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 
 */
 
+#ifndef SAKURA_CWSH_B4802BFB_233E_4104_AEA7_AE3721801C27_H_
+#define SAKURA_CWSH_B4802BFB_233E_4104_AEA7_AE3721801C27_H_
 #pragma once
 
 #include <ActivScp.h>
@@ -58,3 +61,4 @@ private:
 	IActiveScript *m_Engine;
 	List m_IfObjArr;
 };
+#endif /* SAKURA_CWSH_B4802BFB_233E_4104_AEA7_AE3721801C27_H_ */

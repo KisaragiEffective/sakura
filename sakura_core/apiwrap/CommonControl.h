@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_COMMONCONTROL_27CF9891_7D70_469F_8AC4_155FA493D7CC_H_
+#define SAKURA_COMMONCONTROL_27CF9891_7D70_469F_8AC4_155FA493D7CC_H_
 #pragma once
 
 #include <CommCtrl.h> // コモンコントロール
@@ -42,6 +45,10 @@ namespace ApiWrap
 	inline LRESULT StatusBar_GetTextLength(HWND hwndStatus, WPARAM opt)
 	{
 		return ::SendMessage( hwndStatus, SB_GETTEXTLENGTH, opt, (LPARAM)0 );
+	}
+	inline LRESULT StatusBar_GetRect(HWND hwndStatus, WPARAM opt, RECT* rect)
+	{
+		return ::SendMessage( hwndStatus, SB_GETRECT, opt, (LPARAM)rect );
 	}
 
 	inline int StatusBar_SetParts(HWND hwndCtl, int num, int* positions)		{ return (int)(DWORD)::SendMessage(hwndCtl, SB_SETPARTS, (WPARAM)num, (LPARAM)positions); }
@@ -86,6 +93,8 @@ namespace ApiWrap
 	inline int Toolbar_SetButtonInfo(HWND hwndCtl, int index, TBBUTTONINFO* info)	{ return (int)(DWORD)::SendMessage(hwndCtl, TB_SETBUTTONINFO, (WPARAM)index, (LPARAM)info); }
 	inline BOOL Toolbar_SetButtonSize(HWND hwndCtl, int width, int height)			{ return (BOOL)(DWORD)::SendMessage(hwndCtl, TB_SETBUTTONSIZE, 0L, MAKELONG(width, height)); }
 	inline DWORD Toolbar_SetExtendedStyle(HWND hwndCtl, DWORD styles)				{ return (DWORD)::SendMessage(hwndCtl, TB_SETEXTENDEDSTYLE, 0L, (LPARAM)styles); }
+	inline int Toolbar_GetState(HWND hwndCtl, int index)							{ return (int)::SendMessage(hwndCtl, TB_GETSTATE, (WPARAM)index, 0L); }
+	inline BOOL Toolbar_SetState(HWND hwndCtl, int index, WORD state)				{ return (BOOL)::SendMessage(hwndCtl, TB_SETSTATE, (WPARAM)index, state); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      Tooltip コントロール                   //
@@ -97,3 +106,4 @@ namespace ApiWrap
 }
 
 using namespace ApiWrap;
+#endif /* SAKURA_COMMONCONTROL_27CF9891_7D70_469F_8AC4_155FA493D7CC_H_ */

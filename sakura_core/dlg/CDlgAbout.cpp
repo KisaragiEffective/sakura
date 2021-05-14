@@ -13,6 +13,7 @@
 	Copyright (C) 2004, Moca
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, Moca
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -27,7 +28,12 @@
 #include "util/window.h"
 #include "sakura_rc.h" // 2002/2/10 aroka 復帰
 #include "version.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 // バージョン情報 CDlgAbout.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12900
@@ -269,6 +275,9 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	}
 	//	To Here Dec. 2, 2002 genta
 
+	/* 基底クラスメンバ */
+	(void)CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
+
 	// URLウィンドウをサブクラス化する
 	m_UrlUrWnd.SetSubclassWindow( GetItemHwnd( IDC_STATIC_URL_UR ) );
 #ifdef GIT_REMOTE_ORIGIN_URL
@@ -286,9 +295,6 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	//	Oct. 22, 2005 genta 原作者ホームページが無くなったので削除
 	//m_UrlOrgWnd.SubclassWindow( GetItemHwnd(IDC_STATIC_URL_ORG ) );
-
-	/* 基底クラスメンバ */
-	(void)CDialog::OnInitDialog( GetHwnd(), wParam, lParam );
 
 	/* デフォルトでは一番最初のタブオーダーの要素になるので明示的に OK ボタンにフォーカスを合わせる */
 	::SetFocus(GetItemHwnd(IDOK));
@@ -390,14 +396,14 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 		SendMessageAny( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
 
 	// 設定されているテキストを取得する
-	const ULONG cchText = ::GetWindowTextLength( hWnd );
-	auto textBuf = std::make_unique<WCHAR[]>( cchText + 1 );
-	WCHAR* pchText = textBuf.get();
-	::GetWindowText( hWnd, pchText, cchText + 1 );
+	std::wstring strText;
+	if( ApiWrap::Wnd_GetText( hWnd, strText ) ){
+		// サイズを調整する
+		auto retSetText = OnSetText( strText.data(), strText.length() );
+		return retSetText ? TRUE : FALSE;
+	}
 
-	// サイズを調整する
-	auto retSetText = OnSetText( pchText, cchText );
-	return retSetText ? TRUE : FALSE;
+	return FALSE;
 }
 
 LRESULT CALLBACK CUrlWnd::UrlWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
@@ -538,7 +544,7 @@ bool CUrlWnd::OnSetText( _In_opt_z_ LPCWSTR pchText, _In_opt_ size_t cchText ) c
 	// DrawText関数を使ってサイズを計測する
 	// ※この処理は実際には描かない
 	CMyRect rcText;
-	int retDrawText = ::DrawText( hDC, pchText, cchText, &rcText, DT_CALCRECT );
+	int retDrawText = ::DrawText( hDC, pchText, static_cast<int>(cchText), &rcText, DT_CALCRECT );
 
 	// DCの後始末
 	::SelectObject( hDC, hObj );

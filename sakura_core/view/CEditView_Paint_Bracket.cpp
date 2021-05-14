@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -125,8 +126,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 		return;
 	}
 
-	CGraphics gr;
-	gr.Init(::GetDC(GetHwnd()));
+	CGraphics gr(::GetDC(GetHwnd()));
 	bool bCaretChange = false;
 	gr.SetTextBackTransparent(true);
 
@@ -321,7 +321,7 @@ bool CEditView::SearchBracket(
 	CLogicPoint ptPos;
 
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( ptLayout, &ptPos );
-	const wchar_t *cline = m_pcEditDoc->m_cDocLineMgr.GetLine(ptPos.GetY2())->GetDocLineStrWithEOL(&len);
+	const wchar_t *cline = CDocLine::GetDocLineStrWithEOL_Safe(m_pcEditDoc->m_cDocLineMgr.GetLine(ptPos.GetY2()), &len);
 
 	//	Jun. 19, 2000 genta
 	if( cline == NULL )	//	最後の行に本文がない場合

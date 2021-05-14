@@ -11,6 +11,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2012, Uchi
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -28,8 +29,13 @@
 #include "util/window.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 //GREP CDlgGrep.cpp	//@@@ 2002.01.07 add start MIK
 const DWORD p_helpids[] = {	//12000
@@ -331,32 +337,27 @@ BOOL CDlgGrep::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	g_pOnFolderProc = (WNDPROC)GetWindowLongPtr(hFolder, GWLP_WNDPROC);
 	SetWindowLongPtr(hFolder, GWLP_WNDPROC, (LONG_PTR)OnFolderProc);
 
-	m_comboDelText = SComboBoxItemDeleter();
-	m_comboDelText.pRecent = &m_cRecentSearch;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_comboDelText);
-	m_comboDelFile = SComboBoxItemDeleter();
-	m_comboDelFile.pRecent = &m_cRecentGrepFile;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FILE), &m_comboDelFile);
-	m_comboDelFolder = SComboBoxItemDeleter();
-	m_comboDelFolder.pRecent = &m_cRecentGrepFolder;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FOLDER), &m_comboDelFolder);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_TEXT), &m_cRecentSearch);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FILE), &m_cRecentGrepFile);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_FOLDER), &m_cRecentGrepFolder);
 
-	m_comboDelExcludeFile = SComboBoxItemDeleter();
-	m_comboDelExcludeFile.pRecent = &m_cRecentExcludeFile;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FILE), &m_comboDelExcludeFile);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FILE), &m_cRecentExcludeFile);
+	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FOLDER), &m_cRecentExcludeFolder);
 
-	m_comboDelExcludeFolder = SComboBoxItemDeleter();
-	m_comboDelExcludeFolder.pRecent = &m_cRecentExcludeFolder;
-	SetComboBoxDeleter(GetItemHwnd(IDC_COMBO_EXCLUDE_FOLDER), &m_comboDelExcludeFolder);
+	BOOL bRet = CDialog::OnInitDialog( hwndDlg, wParam, lParam );
+	if( !bRet ) return bRet;
 
 	// フォント設定	2012/11/27 Uchi
-	HFONT hFontOld = (HFONT)::SendMessageAny( GetItemHwnd( IDC_COMBO_TEXT ), WM_GETFONT, 0, 0 );
-	HFONT hFont = SetMainFont( GetItemHwnd( IDC_COMBO_TEXT ) );
-	m_cFontText.SetFont( hFontOld, hFont, GetItemHwnd( IDC_COMBO_TEXT ) );
+	const int nItemIds[] = { IDC_COMBO_TEXT, IDC_COMBO_FILE, IDC_COMBO_FOLDER, IDC_COMBO_EXCLUDE_FILE, IDC_COMBO_EXCLUDE_FOLDER };
+	m_cFontDeleters.resize( _countof( nItemIds ) );
+	for( size_t i = 0; i < _countof( nItemIds ); ++i ){
+		HWND hwndItem = GetItemHwnd( nItemIds[i] );
+		HFONT hFontOld = (HFONT)::SendMessageAny( hwndItem, WM_GETFONT, 0, 0 );
+		HFONT hFont = SetMainFont( hwndItem );
+		m_cFontDeleters[i].SetFont( hFontOld, hFont, hwndItem );
+	}
 
-	/* 基底クラスメンバ */
-//	CreateSizeBox();
-	return CDialog::OnInitDialog( hwndDlg, wParam, lParam );
+	return bRet;
 }
 
 /*! @brief フォルダ指定EditBoxのコールバック関数
@@ -397,7 +398,9 @@ LRESULT CALLBACK OnFolderProc(HWND hwnd,UINT msg,WPARAM wparam,LPARAM lparam)
 
 BOOL CDlgGrep::OnDestroy()
 {
-	m_cFontText.ReleaseOnDestroy();
+	for( size_t i = 0; i < m_cFontDeleters.size(); ++i ){
+		m_cFontDeleters[i].ReleaseOnDestroy();
+	}
 	return CDialog::OnDestroy();
 }
 
@@ -783,11 +786,8 @@ int CDlgGrep::GetData( void )
 	m_bGrepSeparateFolder = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_SEP_FOLDER );
 
 	/* 検索文字列 */
-	int nBufferSize = ::GetWindowTextLength( GetItemHwnd(IDC_COMBO_TEXT) ) + 1;
-	auto vText = std::make_unique<WCHAR[]>(nBufferSize);
-	::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, &vText[0], nBufferSize);
-	m_strText = &vText[0];
-	m_bSetText = true;
+	m_bSetText = ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );;
+
 	/* 検索ファイル */
 	::DlgItem_GetText( GetHwnd(), IDC_COMBO_FILE, m_szFile, _countof2(m_szFile) );
 	/* 検索フォルダ */
@@ -918,11 +918,9 @@ LPVOID CDlgGrep::GetHelpIdTable(void)
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 {
 	if( wcschr( folder, L';') ){
-		WCHAR szQuoteFolder[MAX_PATH];
-		szQuoteFolder[0] = L'"';
-		wcscpy( szQuoteFolder + 1, folder );
-		wcscat( szQuoteFolder, L"\"" );
-		::SetWindowText( hwndCtrl, szQuoteFolder );
+		std::wstring strQuoteFolder;
+		strQuoteFolder = std::wstring(L"\"") + folder + std::wstring(L"\"");
+		::SetWindowText( hwndCtrl, strQuoteFolder.c_str() );
 	}else{
 		::SetWindowText( hwndCtrl, folder );
 	}

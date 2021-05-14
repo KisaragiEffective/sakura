@@ -9,6 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, genta
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -31,6 +32,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_
+#define SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_
 #pragma once
 
 #include <windows.h>
@@ -85,3 +88,4 @@ protected:
   #define MY_TRACETIME(c,m)
   #define MY_RUNNINGTIMER(c,m)
 #endif
+#endif /* SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_ */

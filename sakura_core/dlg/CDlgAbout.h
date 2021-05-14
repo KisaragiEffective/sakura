@@ -8,11 +8,14 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000, genta
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
+#ifndef SAKURA_CDLGABOUT_7F887984_7DEB_42C7_AB87_7CE7D9801700_H_
+#define SAKURA_CDLGABOUT_7F887984_7DEB_42C7_AB87_7CE7D9801700_H_
 #pragma once
 
 #include "dlg/CDialog.h"
@@ -62,3 +65,4 @@ private:
 	CUrlWnd m_UrlGitHubPRWnd;
 	CUrlWnd m_UrlOrgWnd;
 };
+#endif /* SAKURA_CDLGABOUT_7F887984_7DEB_42C7_AB87_7CE7D9801700_H_ */

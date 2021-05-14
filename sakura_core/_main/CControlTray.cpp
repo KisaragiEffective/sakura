@@ -19,6 +19,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -49,7 +50,11 @@
 #include "recent/CMRUFolder.h"
 #include "_main/CCommandLine.h"
 #include "CGrepEnumKeys.h"
+#include "apiwrap/StdApi.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
+#include "config/app_constants.h"
+#include "String_define.h"
 
 #define ID_HOTKEY_TRAYMENU	0x1234
 

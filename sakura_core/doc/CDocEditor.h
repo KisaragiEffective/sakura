@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CDOCEDITOR_87202DA6_D60E_4235_AD2F_02507F4E101A_H_
+#define SAKURA_CDOCEDITOR_87202DA6_D60E_4235_AD2F_02507F4E101A_H_
 #pragma once
 
 #include "doc/CDocListener.h"
@@ -61,7 +64,8 @@ public:
 
 	//	May 15, 2000 genta
 	CEol  GetNewLineCode() const { return m_cNewLineCode; }
-	void  SetNewLineCode(const CEol& t){ m_cNewLineCode = t; }
+	void  SetNewLineCode( EEolType t ) noexcept { m_cNewLineCode = t; }
+	void  SetNewLineCode( const CEol& cEol ) noexcept { SetNewLineCode( cEol.GetType() ); }
 
 	//	Oct. 2, 2005 genta 挿入モードの設定
 	bool IsInsMode() const { return m_bInsMode; }
@@ -108,3 +112,4 @@ public:
 private:
 	CDocLineMgr* m_pcDocLineMgr;
 };
+#endif /* SAKURA_CDOCEDITOR_87202DA6_D60E_4235_AD2F_02507F4E101A_H_ */

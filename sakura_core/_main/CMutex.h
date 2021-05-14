@@ -6,6 +6,7 @@
 */
 /*
 	Copyright (C) 2007, ryoji, genta
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -28,6 +29,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_CMUTEX_51EDDE78_F635_419A_9E10_159485D0F710_H_
+#define SAKURA_CMUTEX_51EDDE78_F635_419A_9E10_159485D0F710_H_
 #pragma once
 
 #include <Windows.h>
@@ -103,3 +106,4 @@ public:
 		o_.Unlock();
 	}
 };
+#endif /* SAKURA_CMUTEX_51EDDE78_F635_419A_9E10_159485D0F710_H_ */

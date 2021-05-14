@@ -257,6 +257,8 @@
     <ClInclude Include="..\sakura_core\apiwrap\CommonControl.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdApi.h" />
     <ClInclude Include="..\sakura_core\apiwrap\StdControl.h" />
+    <ClInclude Include="..\sakura_core\basis\TComImpl.hpp" />
+    <ClInclude Include="..\sakura_core\basis\CErrorInfo.h" />
     <ClInclude Include="..\sakura_core\basis\CLaxInteger.h" />
     <ClInclude Include="..\sakura_core\basis\CMyPoint.h" />
     <ClInclude Include="..\sakura_core\basis\CMyRect.h" />
@@ -315,6 +317,9 @@
     <ClInclude Include="..\sakura_core\config\maxdata.h" />
     <ClInclude Include="..\sakura_core\config\system_constants.h" />
     <ClInclude Include="..\sakura_core\convert\CConvert.h" />
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeAutoToSjis.h" />
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeFromSjis.h" />
+    <ClInclude Include="..\sakura_core\convert\CConvert_CodeToSjis.h" />
     <ClInclude Include="..\sakura_core\convert\CConvert_HaneisuToZeneisu.h" />
     <ClInclude Include="..\sakura_core\convert\CConvert_HankataToZenhira.h" />
     <ClInclude Include="..\sakura_core\convert\CConvert_HankataToZenkata.h" />
@@ -487,6 +492,7 @@
     <ClInclude Include="..\sakura_core\recent\CRecentReplace.h" />
     <ClInclude Include="..\sakura_core\recent\CRecentSearch.h" />
     <ClInclude Include="..\sakura_core\recent\CRecentTagjumpKeyword.h" />
+    <ClInclude Include="..\sakura_core\recent\SShare_History.h" />
     <ClInclude Include="..\sakura_core\sakura.hh" />
     <ClInclude Include="..\sakura_core\sakura_rc.h" />
     <ClInclude Include="..\sakura_core\StdAfx.h" />
@@ -524,9 +530,9 @@
     <ClInclude Include="..\sakura_core\util\string_ex.h" />
     <ClInclude Include="..\sakura_core\util\string_ex2.h" />
     <ClInclude Include="..\sakura_core\util\tchar_convert.h" />
-    <ClInclude Include="..\sakura_core\util\tchar_printf.h" />
     <ClInclude Include="..\sakura_core\util\tchar_template.h" />
     <ClInclude Include="..\sakura_core\util\window.h" />
+    <ClInclude Include="..\sakura_core\util\zoom.h" />
     <ClInclude Include="..\sakura_core\version.h" />
     <ClInclude Include="..\sakura_core\view\CCaret.h" />
     <ClInclude Include="..\sakura_core\view\CEditView.h" />
@@ -600,18 +606,15 @@
     <None Include="..\resource\cursor_tab_join.cur" />
     <None Include="..\resource\cursor_tab_separate.cur" />
     <None Include="..\resource\MainMenu.ini" />
+    <None Include="..\sakura_core\sakura_rc.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\sakura_core\sakura_rc.rc">
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/c 65001</AdditionalOptions>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/c 65001</AdditionalOptions>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/c 65001</AdditionalOptions>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/c 65001</AdditionalOptions>
-    </ResourceCompile>
+    <ResourceCompile Include="..\sakura_core\sakura_rc.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\sakura_core\apiwrap\StdApi.cpp" />
     <ClCompile Include="..\sakura_core\apiwrap\StdControl.cpp" />
+    <ClCompile Include="..\sakura_core\basis\CErrorInfo.cpp" />
     <ClCompile Include="..\sakura_core\basis\CLaxInteger.cpp" />
     <ClCompile Include="..\sakura_core\basis\CMyPoint.cpp" />
     <ClCompile Include="..\sakura_core\basis\CMyRect.cpp" />
@@ -679,6 +682,9 @@
     <ClCompile Include="..\sakura_core\cmd\CViewCommander_Window.cpp" />
     <ClCompile Include="..\sakura_core\config\build_config.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert.cpp" />
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeAutoToSjis.cpp" />
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeFromSjis.cpp" />
+    <ClCompile Include="..\sakura_core\convert\CConvert_CodeToSjis.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert_HaneisuToZeneisu.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert_HankataToZenhira.cpp" />
     <ClCompile Include="..\sakura_core\convert\CConvert_HankataToZenkata.cpp" />
@@ -922,9 +928,9 @@
     <ClCompile Include="..\sakura_core\util\string_ex.cpp" />
     <ClCompile Include="..\sakura_core\util\string_ex2.cpp" />
     <ClCompile Include="..\sakura_core\util\tchar_convert.cpp" />
-    <ClCompile Include="..\sakura_core\util\tchar_printf.cpp" />
     <ClCompile Include="..\sakura_core\util\tchar_template.cpp" />
     <ClCompile Include="..\sakura_core\util\window.cpp" />
+    <ClCompile Include="..\sakura_core\util\zoom.cpp" />
     <ClCompile Include="..\sakura_core\view\CCaret.cpp" />
     <ClCompile Include="..\sakura_core\view\CEditView.cpp" />
     <ClCompile Include="..\sakura_core\view\CEditView_Cmdgrep.cpp" />
@@ -1006,17 +1012,21 @@
   <ItemGroup>
     <FuncCodeRes Include="..\sakura_core\Funccode_x.hsrc" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MakefileMake\MakefileMake.vcxproj">
-      <Project>{40735439-b12b-40ac-92f7-f1183d8b6862}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Import Project="..\sakura\githash.targets" />
   <Import Project="..\sakura\funccode.targets" />
+  <Target Name="ExtractBregOnig" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer\externals\bregonig\bron420.zip" Outputs="$(OutDir)\bregonig.dll">
+    <Exec Command="7z e &quot;$(SolutionDir)installer\externals\bregonig\bron420.zip&quot; -o$(OutDir) -y x64/bregonig.dll" Condition="'$(Platform)' == 'x64'" />
+    <Exec Command="7z e &quot;$(SolutionDir)installer\externals\bregonig\bron420.zip&quot; -o$(OutDir) -y bregonig.dll" Condition="'$(Platform)' == 'Win32'" />
+  </Target>
+  <Target Name="ExtractCtags" Condition="'$(Platform)' == 'x64'" DependsOnTargets="Link" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip" Outputs="$(OutDir)\ctags.exe">
+    <Exec Command="7z e &quot;$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x64.zip&quot; -o$(OutDir) -y ctags.exe" />
+  </Target>
+  <Target Name="ExtractCtags" Condition="'$(Platform)' == 'Win32'" DependsOnTargets="ClCompile" BeforeTargets="FinalizeBuildStatus" Inputs="$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip" Outputs="$(OutDir)\ctags.exe">
+    <Exec Command="7z e &quot;$(SolutionDir)installer/externals/universal-ctags/ctags-2020-01-12_feffe43a-x86.zip&quot; -o$(OutDir) -y ctags.exe" />
+  </Target>
   <Target Name="AppendCleanTargets" BeforeTargets="CoreClean">
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>

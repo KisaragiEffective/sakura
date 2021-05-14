@@ -10,6 +10,7 @@
 	Copyright (C) 2001, YAZAKI, genta
 	Copyright (C) 2002, YAZAKI, Moca
 	Copyright (C) 2003, genta, Moca
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -35,12 +36,15 @@
 PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタプリタコンポーネントです。
 */
 
+#ifndef SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_
+#define SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_
 #pragma once
 
 #include <ObjIdl.h>  // VARIANT等
 #include <stdio.h>
 #include "macro/CSMacroMgr.h"
 #include "extmodule/CDllHandler.h"
+#include "mem/CNativeA.h"
 
 #define PPADLL_VER 123
 
@@ -291,3 +295,4 @@ private:
 	static int					m_nFuncNum;	//	SAKURAエディタ用関数の数
 */
 };
+#endif /* SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_ */

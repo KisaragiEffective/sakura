@@ -4,6 +4,7 @@
 */
 /*
 	Copyright (C) 2009, syat
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -25,6 +26,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CWSHPLUGIN_C424AA2D_B0A3_4170_9566_7F316368EDAF_H_
+#define SAKURA_CWSHPLUGIN_C424AA2D_B0A3_4170_9566_7F316368EDAF_H_
 #pragma once
 
 #include "plugin/CPlugin.h"
@@ -84,3 +87,4 @@ public:
 private:
 	bool m_bUseCache;
 };
+#endif /* SAKURA_CWSHPLUGIN_C424AA2D_B0A3_4170_9566_7F316368EDAF_H_ */

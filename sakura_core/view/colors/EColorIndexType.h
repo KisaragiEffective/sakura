@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_ECOLORINDEXTYPE_A3927D3F_B421_443A_9F59_6BF51074FF24_H_
+#define SAKURA_ECOLORINDEXTYPE_A3927D3F_B421_443A_9F59_6BF51074FF24_H_
 #pragma once
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -112,3 +115,4 @@ enum EColorIndexType {
 	COLORIDX_DEFAULT		= COLORIDX_TEXT,							//!< デフォルト
 	COLORIDX_SEARCHTAIL		= COLORIDX_SEARCH5,
 };
+#endif /* SAKURA_ECOLORINDEXTYPE_A3927D3F_B421_443A_9F59_6BF51074FF24_H_ */

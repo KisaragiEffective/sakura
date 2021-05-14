@@ -3,6 +3,7 @@
 // なんかシェルっぽい機能の関数群
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -24,12 +25,21 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_SHELL_0A8B6454_B007_46E5_9606_8D2FD7993B91_H_
+#define SAKURA_SHELL_0A8B6454_B007_46E5_9606_8D2FD7993B91_H_
 #pragma once
 
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData);	/* WinHelp のかわりに HtmlHelp を呼び出す */	// 2006.07.22 ryoji
 
 /* Shell Interface系(?) */
-BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName );	/* フォルダ選択ダイアログ */
+BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR* strFolderName, size_t nMaxCount );	/* フォルダ選択ダイアログ */
+
+template <size_t nMaxCount>
+BOOL SelectDir(HWND hWnd, const WCHAR* pszTitle, const WCHAR* pszInitFolder, WCHAR(&strFolderName)[nMaxCount])
+{
+	return SelectDir( hWnd, pszTitle, pszInitFolder, strFolderName, nMaxCount );
+}
+
 BOOL ResolveShortcutLink(HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath);/* ショートカット(.lnk)の解決 */
 
 HWND OpenHtmlHelp( HWND hWnd, LPCWSTR szFile, UINT uCmd, DWORD_PTR data,bool msgflag = true);
@@ -44,3 +54,4 @@ INT_PTR MyPropertySheet( LPPROPSHEETHEADER lppsph );	// 独自拡張プロパテ
 
 //!フォント選択ダイアログ
 BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool );	// 2009.10.01 ryoji ポイントサイズ（1/10ポイント単位）引数追加
+#endif /* SAKURA_SHELL_0A8B6454_B007_46E5_9606_8D2FD7993B91_H_ */

@@ -7,6 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -29,6 +30,8 @@
 		   distribution.
 */
 
+#ifndef SAKURA_MESSAGEBOXF_542C25FF_34EB_4920_AC1A_DA32919E101B_H_
+#define SAKURA_MESSAGEBOXF_542C25FF_34EB_4920_AC1A_DA32919E101B_H_
 #pragma once
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -87,3 +90,4 @@ int TopCustomMessage(HWND hwnd, UINT uType, LPCWSTR format, ...);	//(TOPMOST)
 
 //作者に教えて欲しいエラー
 int PleaseReportToAuthor(HWND hwnd, LPCWSTR format, ...);
+#endif /* SAKURA_MESSAGEBOXF_542C25FF_34EB_4920_AC1A_DA32919E101B_H_ */

@@ -13,6 +13,7 @@
 	Copyright (C) 2008, nasukoji
 	Copyright (C) 2012, ossan (ossan@ongs.net)
 	Copyright (C) 2013, Uchi
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -49,7 +50,12 @@
 #include "env/CSakuraEnvironment.h"
 // CColorStrategyは本来はCEditViewが必要だが、CEditWnd.hあたりでinclude済み
 #include "view/colors/CColorStrategy.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
+#include "CSelectLang.h"
 #include "sakura_rc.h"
+#include "config/system_constants.h"
+#include "String_define.h"
 
 using namespace std;
 
@@ -888,7 +894,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 		m_hwndPrintPreviewBar, 
 		LS(STR_ERR_DLGPRNPRVW5),
 		szMessage,
-		INPUT_PAGE_NUM_LEN,
+		_countof(szPageNum) - 1,
 		szPageNum
 	);
 	if( FALSE != bDlgInputPageResult ){
@@ -1347,7 +1353,8 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_CENTER] : m_pPrintSetting->m_szFooterForm[POS_CENTER],
 			szWork, nWorkLen);
 		nLen = wcslen( szWork );
-		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing); //テキスト幅
+		std::vector<int> vDxArray;
+		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing, vDxArray); //テキスト幅
 		Print_DrawLine(
 			hdc,
 			CMyPoint(
@@ -1366,7 +1373,7 @@ void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader
 			bHeader ? m_pPrintSetting->m_szHeaderForm[POS_RIGHT] : m_pPrintSetting->m_szFooterForm[POS_RIGHT],
 			szWork, nWorkLen);
 		nLen = wcslen( szWork );
-		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing); //テキスト幅
+		nTextWidth = CTextMetrics::CalcTextWidth2(szWork, nLen, nDx, spaceing, vDxArray); //テキスト幅
 		Print_DrawLine(
 			hdc,
 			CMyPoint(
@@ -1950,7 +1957,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 	/* 縦スクロールバーの作成 */
 	m_hwndVScrollBar = ::CreateWindowEx(
 		0L,									/* no extended styles			*/
-		L"SCROLLBAR",						/* scroll bar control class		*/
+		WC_SCROLLBAR,						/* scroll bar control class		*/
 		NULL,								/* text for window title bar	*/
 		WS_VISIBLE | WS_CHILD | SBS_VERT,	/* scroll bar styles			*/
 		0,									/* horizontal position			*/
@@ -1976,7 +1983,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 	/* 横スクロールバーの作成 */
 	m_hwndHScrollBar = ::CreateWindowEx(
 		0L,									/* no extended styles			*/
-		L"SCROLLBAR",						/* scroll bar control class		*/
+		WC_SCROLLBAR,						/* scroll bar control class		*/
 		NULL,								/* text for window title bar	*/
 		WS_VISIBLE | WS_CHILD | SBS_HORZ,	/* scroll bar styles			*/
 		0,									/* horizontal position			*/
@@ -2001,7 +2008,7 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 	/* サイズボックスの作成 */
 	m_hwndSizeBox = ::CreateWindowEx(
 		WS_EX_CONTROLPARENT/*0L*/, 							/* no extended styles			*/
-		L"SCROLLBAR",										/* scroll bar control class		*/
+		WC_SCROLLBAR,										/* scroll bar control class		*/
 		NULL,												/* text for window title bar	*/
 		WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles			*/
 		0,													/* horizontal position			*/
@@ -2061,6 +2068,8 @@ INT_PTR CALLBACK CPrintPreview::PrintPreviewBar_DlgProc(
 	CPrintPreview* pCPrintPreview;
 	switch( uMsg ){
 	case WM_INITDIALOG:
+		UpdateDialogFont( hwndDlg );
+
 		// Modified by KEITA for WIN64 2003.9.6
 		::SetWindowLongPtr( hwndDlg, DWLP_USER, lParam );
 		// 2007.02.11 Moca WM_INITもDispatchEvent_PPBを呼ぶように

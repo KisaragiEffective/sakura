@@ -17,6 +17,7 @@
 	Copyright (C) 2005, かろと
 	Copyright (C) 2006, かろと
 	Copyright (C) 2007, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -47,6 +48,8 @@
 #include "charset/charcode.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+#include "apiwrap/StdControl.h"
+#include "String_define.h"
 
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
 const wchar_t CBregexp::m_tmpBuf[2] = L"\0";

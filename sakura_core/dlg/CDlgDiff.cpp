@@ -12,6 +12,7 @@
 	Copyright (C) 2004, MIK, genta, じゅうじ
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2009, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -25,8 +26,11 @@
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+#include "config/system_constants.h"
 
 const DWORD p_helpids[] = {	//13200
 	IDC_BUTTON_DIFF_DST,		HIDC_BUTTON_DIFF_DST,
@@ -239,7 +243,7 @@ void CDlgDiff::SetData( void )
 		EditInfo	*pFileInfo;
 		int			i;
 		int			nItem;
-		WIN_CHAR	szName[_MAX_PATH];
+		WCHAR		szName[512];
 		int			count = 0;
 		int			selIndex = 0;
 		ECodeType	code;

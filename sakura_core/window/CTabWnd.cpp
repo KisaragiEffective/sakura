@@ -14,6 +14,7 @@
 	Copyright (C) 2009, ryoji
 	Copyright (C) 2012, Moca, syat, novice, uchi
 	Copyright (C) 2013, Moca, Uchi, aroka, novice, syat, ryoji
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -51,8 +52,12 @@
 #include "util/window.h"
 #include "util/module.h"
 #include "util/string_ex2.h"
+#include "apiwrap/StdApi.h"
+#include "apiwrap/CommonControl.h"
 #include "sakura_rc.h"
 #include <windowsx.h>
+#include "config/system_constants.h"
+#include "String_define.h"
 
 // 2006.01.30 ryoji タブのサイズ／位置に関する定義
 // 2009.10.01 ryoji 高DPI対応スケーリング
@@ -1523,14 +1528,12 @@ LRESULT CTabWnd::OnMouseMove( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				}
 				else
 				{
-					::LoadString( GetAppInstance(), F_GROUPCLOSE, szText, _countof(szText) );
-					szText[_countof(szText) - 1] = L'\0';
+					wcsncpy_s(szText, LS(F_GROUPCLOSE), _TRUNCATE);
 				}
 			}
 			else
 			{
-				::LoadString( GetAppInstance(), F_EXITALLEDITORS, szText, _countof(szText) );
-				szText[_countof(szText) - 1] = L'\0';
+					wcsncpy_s(szText, LS(F_EXITALLEDITORS), _TRUNCATE);
 			}
 		}
 	}
@@ -3266,7 +3269,7 @@ void CTabWnd::SizeBox_ONOFF( bool bSizeBox )
 	}else{
 		m_hwndSizeBox = ::CreateWindowEx(
 			0L, 						/* no extended styles			*/
-			L"SCROLLBAR",				/* scroll bar control class		*/
+			WC_SCROLLBAR,				/* scroll bar control class		*/
 			NULL,						/* text for window title bar	*/
 			WS_VISIBLE | WS_CHILD | SBS_SIZEBOX | SBS_SIZEGRIP, /* scroll bar styles */
 			0,							/* horizontal position			*/

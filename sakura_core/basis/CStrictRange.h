@@ -1,6 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
+	Copyright (C) 2018-2021, Sakura Editor Organization
 
 	This software is provided 'as-is', without any express or implied
 	warranty. In no event will the authors be held liable for any damages
@@ -22,6 +23,8 @@
 		3. This notice may not be removed or altered from any source
 		   distribution.
 */
+#ifndef SAKURA_CSTRICTRANGE_270CB3D2_3CD3_4A6F_8319_482FB010C0BB_H_
+#define SAKURA_CSTRICTRANGE_270CB3D2_3CD3_4A6F_8319_482FB010C0BB_H_
 #pragma once
 
 template <class PointType>
@@ -153,3 +156,4 @@ private:
 	PointType m_ptFrom;
 	PointType m_ptTo;
 };
+#endif /* SAKURA_CSTRICTRANGE_270CB3D2_3CD3_4A6F_8319_482FB010C0BB_H_ */
